@@ -102,10 +102,10 @@ class RLGTrainer:
             # Make sure to install WandB if you actually use this.
             import wandb
 
-            run_name = f"{self.cfg.wandb_name}_{time_str}"
+            run_name = f"{self.cfg.comet_ml_name}_{time_str}"
 
             wandb.init(
-                project=self.cfg.wandb_project,
+                project=self.cfg._project,
                 group=self.cfg.wandb_group,
                 entity=self.cfg.wandb_entity,
                 config=self.cfg_dict,
@@ -113,13 +113,33 @@ class RLGTrainer:
                 id=run_name,
                 resume="allow",
                 monitor_gym=True,
+                reinit= True,
             )
+
+        if self.cfg.comet_ml_activate:
+            # Zeitstempel hinzufügen, um eindeutige Run-Namen zu erzeugen
+            time_str = time.strftime("%Y%m%d-%H%M%S")
+            run_name = f"{self.cfg.comet_ml_name}_{time_str}"
+
+            # Initialisierung des comet_ml-Experiments
+            experiment = Experiment(
+                api_key="RH7SFEagoEi1x16YNQHMtEmpU",  # Ersetze DEIN_COMET_ML_API_SCHLÜSSEL durch deinen echten API-Schlüssel
+                project_name=self.cfg.comet_ml_project,
+                workspace=self.cfg.comet_ml_workspace,  # 'entity' in comet_ml wird als 'workspace' bezeichnet
+                log_code=True  # Code-Protokollierung aktivieren (optional)
+            )
+
+            # Experiment-Konfiguration hinzufügen
+            experiment.set_name(run_name)
+            experiment.add_tags(["Dein_Tag1", "Dein_Tag2"])  # Tags hinzufügen (optional)
+            experiment.log_parameters(self.cfg_dict)  # Konfigurationsparameter protokollieren
+
 
         runner.run(
             {"train": not self.cfg.test, "play": self.cfg.test, "checkpoint": self.cfg.checkpoint, "sigma": None}
         )
 
-        if self.cfg.wandb_activate:
+        if self.cfg.comet_ml_activate:
             wandb.finish()
 
 

@@ -29,7 +29,8 @@
 
 import datetime
 import os
-import gym
+import gymnasium as gym
+from gymnasium.wrappers import RecordVideo
 import hydra
 import torch
 from omegaconf import DictConfig
@@ -46,10 +47,25 @@ from rl_games.torch_runner import Runner
 
 class RLGTrainer:
     def __init__(self, cfg, cfg_dict):
+        '''
+        Initializes the RLGTrainer with the configuration settings.
+        Parameters:
+            cfg (DictConfig): Configuration object obtained from Hydra.
+            cfg_dict (dict): Dictionary version of the Hydra configuration for easier manipulation and access.
+        Return:
+            None
+        '''
         self.cfg = cfg
         self.cfg_dict = cfg_dict
 
     def launch_rlg_hydra(self, env):
+        '''
+        Configures the RL-Games environment and runner. Registers the environment and sets up necessary configurations.
+        Parameters:
+            env: The RL environment instance to be used.
+        Return:
+            None
+        '''
         # `create_rlgpu_env` is environment construction function which is passed to RL Games and called internally.
         # We use the helper function here to specify the environment config.
         self.cfg_dict["task"]["test"] = self.cfg.test
@@ -61,6 +77,14 @@ class RLGTrainer:
         self.rlg_config_dict = omegaconf_to_dict(self.cfg.train)
 
     def run(self, module_path, experiment_dir):
+        '''
+        Executes the RL training or evaluation based on the provided configuration. Manages the setup of training directories and runner.
+        Parameters:
+            module_path (str): Path to the module where experiment results and runs are stored.
+            experiment_dir (str): Directory for storing experiment configurations and outputs.
+        Return:
+            None
+        '''
         self.rlg_config_dict["params"]["config"]["train_dir"] = os.path.join(module_path, "runs")
 
         # create runner and set the settings
@@ -80,6 +104,13 @@ class RLGTrainer:
 
 @hydra.main(version_base=None, config_name="config", config_path="../cfg")
 def parse_hydra_configs(cfg: DictConfig):
+    '''
+    The main function to parse configurations using Hydra, set up the environment, and execute the RL training.
+    Parameters:
+        cfg (DictConfig): Configuration object provided by Hydra based on YAML files and command line arguments.
+    Return:
+        None
+    '''
 
     time_str = datetime.datetime.now().strftime("%Y-%m-%d_%H-%M-%S")
 
@@ -96,7 +127,8 @@ def parse_hydra_configs(cfg: DictConfig):
 
     # select kit app file
     experience = get_experience(headless, cfg.enable_livestream, enable_viewport, cfg.enable_recording, cfg.kit_app)
-
+    
+    # Initialize Environment
     env = VecEnvRLGames(
         headless=headless,
         sim_device=cfg.device_id,
@@ -104,6 +136,7 @@ def parse_hydra_configs(cfg: DictConfig):
         enable_viewport=enable_viewport or cfg.enable_recording,
         experience=experience
     )
+    #print(env_configurations)
 
     # parse experiment directory
     module_path = os.path.abspath(os.path.join(os.path.dirname(omniisaacgymenvs.__file__)))
@@ -123,7 +156,7 @@ def parse_hydra_configs(cfg: DictConfig):
         else:
             env.metadata["render_modes"] = ["rgb_array"]
             env.metadata["render_fps"] = cfg.recording_fps
-        env = gym.wrappers.RecordVideo(
+        env = RecordVideo(
             env, video_folder=videos_dir, step_trigger=video_interval, video_length=video_length
         )
 

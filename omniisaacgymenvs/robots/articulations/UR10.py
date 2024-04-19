@@ -1,4 +1,5 @@
 # Copyright (c) 2018-2022, NVIDIA Corporation
+# Copyright (c) 2022-2023, Johnson Sun
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -27,42 +28,43 @@
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 
-"""Installation script for the 'isaacgymenvs' python package."""
+from typing import Optional
+import torch
+from omni.isaac.core.robots.robot import Robot
+from omni.isaac.core.utils.nucleus import get_assets_root_path
+from omni.isaac.core.utils.stage import add_reference_to_stage
 
-from __future__ import absolute_import
-from __future__ import print_function
-from __future__ import division
+import carb
 
-from setuptools import setup, find_packages
+class UR10(Robot):
+    def __init__(
+        self,
+        prim_path: str,
+        name: Optional[str] = "UR10",
+        usd_path: Optional[str] = None,
+        translation: Optional[torch.tensor] = None,
+        orientation: Optional[torch.tensor] = None,
+    ) -> None:
 
-import os
+        self._usd_path = usd_path
+        self._name = name
 
-# Minimum dependencies required prior to installation
-INSTALL_REQUIRES = [
-    "numpy==1.23.5",
-    "protobuf==3.20.2",
-    "omegaconf==2.3.0",
-    "hydra-core==1.3.2",
-    "urllib3==1.26.16",
-    "rl-games==1.6.1",
-    "moviepy==1.0.3",
-    "gymnasium",
-    "comet_ml",
-    "wandb",
-]
+        if self._usd_path is None:
+            assets_root_path = get_assets_root_path()
+            if assets_root_path is None:
+                carb.log_error("Could not find Isaac Sim assets folder")
+            self._usd_path = "omniverse://localhost/Projects/J3soon/Isaac/2023.1.1/Isaac/Robots/UR10/ur10_long_suction.usd"
 
-# Installation operation
-setup(
-    name="omniisaacgymenvs",
-    author="NVIDIA",
-    version="2023.1.1a",
-    description="RL environments for robot learning in NVIDIA Isaac Sim.",
-    keywords=["robotics", "rl"],
-    include_package_data=True,
-    install_requires=INSTALL_REQUIRES,
-    packages=find_packages("."),
-    classifiers=["Natural Language :: English", "Programming Language :: Python :: 3.7, 3.8"],
-    zip_safe=False,
-)
+        # Depends on your real robot setup
+        self._position = torch.tensor([0.0, 0.0, 0.0]) if translation is None else translation
+        self._orientation = torch.tensor([1.0, 0.0, 0.0, 0.0]) if orientation is None else orientation
 
-# EOF
+        add_reference_to_stage(self._usd_path, prim_path)
+
+        super().__init__(
+            prim_path=prim_path,
+            name=name,
+            translation=self._position,
+            orientation=self._orientation,
+            articulation_controller=None,
+        )

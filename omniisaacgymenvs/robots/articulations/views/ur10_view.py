@@ -1,4 +1,6 @@
+
 # Copyright (c) 2018-2022, NVIDIA Corporation
+# Copyright (c) 2022-2023, Johnson Sun
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -27,42 +29,28 @@
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 
-"""Installation script for the 'isaacgymenvs' python package."""
+from typing import Optional
 
-from __future__ import absolute_import
-from __future__ import print_function
-from __future__ import division
+from omni.isaac.core.articulations import ArticulationView
+from omni.isaac.core.prims import RigidPrimView
 
-from setuptools import setup, find_packages
+import torch
 
-import os
+class UR10View(ArticulationView):
+    def __init__(
+        self,
+        prim_paths_expr: str,
+        name: Optional[str] = "UR10View",
+    ) -> None:
 
-# Minimum dependencies required prior to installation
-INSTALL_REQUIRES = [
-    "numpy==1.23.5",
-    "protobuf==3.20.2",
-    "omegaconf==2.3.0",
-    "hydra-core==1.3.2",
-    "urllib3==1.26.16",
-    "rl-games==1.6.1",
-    "moviepy==1.0.3",
-    "gymnasium",
-    "comet_ml",
-    "wandb",
-]
+        super().__init__(
+            prim_paths_expr=prim_paths_expr,
+            name=name,
+            reset_xform_properties=False
+        )
 
-# Installation operation
-setup(
-    name="omniisaacgymenvs",
-    author="NVIDIA",
-    version="2023.1.1a",
-    description="RL environments for robot learning in NVIDIA Isaac Sim.",
-    keywords=["robotics", "rl"],
-    include_package_data=True,
-    install_requires=INSTALL_REQUIRES,
-    packages=find_packages("."),
-    classifiers=["Natural Language :: English", "Programming Language :: Python :: 3.7, 3.8"],
-    zip_safe=False,
-)
+        # Use RigidPrimView instead of XFormPrimView, since the XForm is not updated when running
+        self._end_effectors = RigidPrimView(prim_paths_expr="/World/envs/.*/ur10/ee_link", name="end_effector_view", reset_xform_properties=False)
 
-# EOF
+    def initialize(self, physics_sim_view):
+        super().initialize(physics_sim_view)

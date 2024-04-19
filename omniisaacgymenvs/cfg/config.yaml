@@ -48,7 +48,7 @@ enable_livestream: False
 mt_timeout: 300
 
 # enables viewport recording
-enable_recording: False
+enable_recording: True
 # interval between video recordings (in steps)
 recording_interval: 2000
 # length of the recorded video (in steps)
@@ -58,11 +58,15 @@ recording_fps: 30
 # directory to save recordings in
 recording_dir: ''
 
-wandb_activate: False
+wandb_activate: True
 wandb_group: ''
 wandb_name: ${train.params.config.name}
-wandb_entity: ''
-wandb_project: 'omniisaacgymenvs'
+wandb_entity: 'voll-olga-ds'
+wandb_project: 'bachelor_thesis'
+
+comet_ml_activate: False
+comet_ml_project: 'ur_10'
+comet_ml_workspace: 'voll_olga'
 
 # path to a kit app file
 kit_app: ''
