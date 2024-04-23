@@ -37,12 +37,25 @@ from rl_games.common.algo_observer import AlgoObserver
 
 
 class RLGPUAlgoObserver(AlgoObserver):
-    """Allows us to log stats from the env along with the algorithm running stats."""
+    """
+    Class that acts as an observer for reinforcement learning algorithms,
+    capable of tracking and logging environment and algorithm statistics during training.
+    Allows us to log stats from the env along with the algorithm running stats.
+    """
 
     def __init__(self):
+        """
+        Initializes the observer without any initial configuration.
+        """
         pass
 
     def after_init(self, algo):
+        """
+        Sets up necessary variables after the algorithm initialization.
+        
+        Parameters:
+            algo: The algorithm instance to observe.
+        """
         self.algo = algo
         self.mean_scores = torch_ext.AverageMeter(1, self.algo.games_to_track).to(self.algo.ppo_device)
         self.ep_infos = []
@@ -50,6 +63,14 @@ class RLGPUAlgoObserver(AlgoObserver):
         self.writer = self.algo.writer
 
     def process_infos(self, infos, done_indices):
+        """
+        Processes information from the environment used for logging purposes.
+        
+        Parameters:
+            infos (dict): Dictionary of information returned from the environment.
+            done_indices: Indices indicating which environments are done.
+        """
+
         assert isinstance(infos, dict), "RLGPUAlgoObserver expects dict info"
         if isinstance(infos, dict):
             if "episode" in infos:
@@ -67,9 +88,20 @@ class RLGPUAlgoObserver(AlgoObserver):
                         self.direct_info[k] = v
 
     def after_clear_stats(self):
+        """
+        Clears statistical counters after each training iteration.
+        """
         self.mean_scores.clear()
 
     def after_print_stats(self, frame, epoch_num, total_time):
+        """
+        Aggregates and logs statistics after each epoch to the tensorboard writer.
+        
+        Parameters:
+            frame: The current training frame.
+            epoch_num: The current epoch number.
+            total_time: Total elapsed training time.
+        """
         if self.ep_infos:
             for key in self.ep_infos[0]:
                 infotensor = torch.tensor([], device=self.algo.device)
@@ -97,19 +129,57 @@ class RLGPUAlgoObserver(AlgoObserver):
 
 
 class RLGPUEnv(vecenv.IVecEnv):
+    """
+    Vectorized environment wrapper for GPU-based reinforcement learning environments.
+    """
     def __init__(self, config_name, num_actors, **kwargs):
+        """
+        Initializes the environment by loading configuration based on the provided name.
+        
+        Parameters:
+            config_name (str): Name of the configuration for environment creation.
+            num_actors (int): Number of simultaneous agents or actors in the environment.
+            kwargs: Additional keyword arguments for environment creation.
+        """
         self.env = env_configurations.configurations[config_name]["env_creator"](**kwargs)
 
     def step(self, action):
+        """
+        Takes an action in the environment and returns the result.
+        
+        Parameters:
+            action: The action to be executed in the environment.
+        
+        Returns:
+            Tuple containing the new state, reward, done flag, and additional info.
+        """
         return self.env.step(action)
 
     def reset(self):
+        """
+        Resets the environment to its initial state.
+        
+        Returns:
+            Initial state of the environment.
+        """
         return self.env.reset()
 
     def get_number_of_agents(self):
+        """
+        Retrieves the number of agents active in the environment.
+        
+        Returns:
+            Integer representing the number of agents.
+        """
         return self.env.get_number_of_agents()
 
     def get_env_info(self):
+        """
+        Collects and returns information about the environment such as action and observation spaces.
+        
+        Returns:
+            A dictionary containing details about the environment's spaces and other configurations.
+        """
         info = {}
         info["action_space"] = self.env.action_space
         info["observation_space"] = self.env.observation_space

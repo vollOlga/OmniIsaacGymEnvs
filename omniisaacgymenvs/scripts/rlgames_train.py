@@ -46,6 +46,9 @@ from rl_games.torch_runner import Runner
 
 
 class RLGTrainer:
+    """
+    Class to configure and manage the training process for reinforcement learning using RL Games and Hydra configurations.
+    """
     def __init__(self, cfg, cfg_dict):
         '''
         Initializes the RLGTrainer with the configuration settings.
@@ -175,7 +178,10 @@ def parse_hydra_configs(cfg: DictConfig):
     cfg.seed = set_seed(cfg.seed, torch_deterministic=cfg.torch_deterministic)
     cfg_dict["seed"] = cfg.seed
 
+    # initialize task
     task = initialize_task(cfg_dict, env)
+
+    # initialize wandb
 
     if cfg.wandb_activate and global_rank == 0:
         # Make sure to install WandB if you actually use this.
@@ -192,6 +198,8 @@ def parse_hydra_configs(cfg: DictConfig):
             name=run_name,
             resume="allow",
         )
+
+    #
 
     torch.cuda.set_device(local_rank)
     rlg_trainer = RLGTrainer(cfg, cfg_dict)

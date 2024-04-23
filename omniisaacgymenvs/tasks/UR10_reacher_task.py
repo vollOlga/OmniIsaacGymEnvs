@@ -126,22 +126,22 @@ class UR10ReacherTask(ReacherTask):
 
     def get_num_dof(self):
         '''
-    Retrieves the number of degrees of freedom (DOF) for the robot arm.
-    Parameters:
-        None
-    Return:
-        int: The number of degrees of freedom of the robot arm.
-    '''
+        Retrieves the number of degrees of freedom (DOF) for the robot arm.
+        Parameters:
+            None
+        Return:
+            int: The number of degrees of freedom of the robot arm.
+        '''
         return self._arms.num_dof
 
     def get_arm(self):
         '''
-    Configures and retrieves an instance of the UR10 robot arm.
-    Parameters:
-        None
-    Return:
-        None: The function sets up the UR10 robot within the simulation environment but does not return anything.
-    '''
+        Configures and retrieves an instance of the UR10 robot arm.
+        Parameters:
+            None
+        Return:
+            None: The function sets up the UR10 robot within the simulation environment but does not return anything.
+        '''
         # ur10 = UR10(
         #         prim_path="/World/UR10",
         #         name="UR10",
@@ -157,34 +157,34 @@ class UR10ReacherTask(ReacherTask):
 
     def get_arm_view(self, scene):
         '''
-    Creates a view of the UR10 robot arm within the given scene context.
-    Parameters:
-        scene: The simulation scene in which the robot is visualized or managed.
-    Return:
-        UR10View: An instance of UR10View that provides an interface to visualize or interact with the robot's configuration.
-    '''
+        Creates a view of the UR10 robot arm within the given scene context.
+        Parameters:
+            scene: The simulation scene in which the robot is visualized or managed.
+        Return:
+            UR10View: An instance of UR10View that provides an interface to visualize or interact with the robot's configuration.
+        '''
         arm_view = UR10View(prim_paths_expr="/World/envs/.*/ur10", name="ur10_view")
         scene.add(arm_view._end_effectors)
         return arm_view
 
     def get_object_displacement_tensor(self):
         '''
-    Generates a tensor representing the displacement of objects in the environment, used for computations in simulation.
-    Parameters:
-        None
-    Return:
-        torch.Tensor: A tensor indicating displacement values for objects in each environment instance.
-    '''
+        Generates a tensor representing the displacement of objects in the environment, used for computations in simulation.
+        Parameters:
+            None
+        Return:
+            torch.Tensor: A tensor indicating displacement values for objects in each environment instance.
+        '''
         return torch.tensor([0.0, 0.05, 0.0], device=self.device).repeat((self.num_envs, 1))
 
     def get_observations(self):
         '''
-    Retrieves observations from the simulation, depending on the observation type defined in the task configuration.
-    Parameters:
-        None
-    Return:
-        dict: A dictionary containing observation buffers for the robot arms.
-    '''
+        Retrieves observations from the simulation, depending on the observation type defined in the task configuration.
+        Parameters:
+            None
+        Return:
+            dict: A dictionary containing observation buffers for the robot arms.
+        '''
         self.arm_dof_pos = self._arms.get_joint_positions()
         #print(self.arm_dof_pos)
         self.arm_dof_vel = self._arms.get_joint_velocities()
@@ -206,12 +206,12 @@ class UR10ReacherTask(ReacherTask):
 
     def get_reset_target_new_pos(self, n_reset_envs):
         '''
-    Computes new target positions for reset environments when resetting part of the simulation environments.
-    Parameters:
-        n_reset_envs (int): The number of environments to reset.
-    Return:
-        torch.Tensor: A tensor containing new target positions for each reset environment.
-    '''
+        Computes new target positions for reset environments when resetting part of the simulation environments.
+        Parameters:
+            n_reset_envs (int): The number of environments to reset.
+        Return:
+            torch.Tensor: A tensor containing new target positions for each reset environment.
+        '''
         # Randomly generate goal positions, although the resulting goal may still not be reachable.
         new_pos = torch_rand_float(-1, 1, (n_reset_envs, 3), device=self.device)
         if self._task_cfg['sim2real']['enabled'] and self.test and self.num_envs == 1:
@@ -230,12 +230,12 @@ class UR10ReacherTask(ReacherTask):
 
     def compute_full_observations(self, no_vel=False):
         '''
-    Computes and updates the observation buffer with all required observations including joint positions, velocities, and goal information.
-    Parameters:
-        no_vel (bool): If true, skips the velocity calculations.
-    Return:
-        None: The method updates the observation buffer in-place and does not return anything.
-    '''
+        Computes and updates the observation buffer with all required observations including joint positions, velocities, and goal information.
+        Parameters:
+            no_vel (bool): If true, skips the velocity calculations.
+        Return:
+            None: The method updates the observation buffer in-place and does not return anything.
+        '''
         if no_vel:
             raise NotImplementedError()
         else:
@@ -251,10 +251,10 @@ class UR10ReacherTask(ReacherTask):
 
     def send_joint_pos(self, joint_pos):
         '''
-    Sends the calculated joint positions to the real UR10 robot if operating in a sim-to-real scenario.
-    Parameters:
-        joint_pos (torch.Tensor): The joint positions to be sent to the real robot.
-    Return:
-        None: The function communicates with the real robot but does not return any value.
-    '''
+        Sends the calculated joint positions to the real UR10 robot if operating in a sim-to-real scenario.
+        Parameters:
+            joint_pos (torch.Tensor): The joint positions to be sent to the real robot.
+        Return:
+            None: The function communicates with the real robot but does not return any value.
+        '''
         self.real_world_ur10.send_joint_pos(joint_pos)

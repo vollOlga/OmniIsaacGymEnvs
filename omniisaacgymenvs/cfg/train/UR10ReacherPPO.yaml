@@ -31,7 +31,6 @@ params:
     device_name: ${....rl_device}
     env_name: rlgpu
     multi_gpu: ${....multi_gpu}
-    #ppo: True
     normalize_input: True
     normalize_value: True
     value_bootstrap: True
@@ -51,7 +50,7 @@ params:
     schedule_type: standard
     kl_threshold: 0.008
     score_to_win: 100000
-    max_epochs: ${resolve_default:50000,${....max_iterations}}
+    max_epochs: ${resolve_default:500000,${....max_iterations}}
     save_best_after: 100
     save_frequency: 1000
     print_stats: True
