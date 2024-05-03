@@ -30,6 +30,7 @@
 from omni.isaac.gym.vec_env import VecEnvBase
 
 import torch
+from torch import Tensor
 import numpy as np
 
 from datetime import datetime
@@ -37,6 +38,10 @@ from datetime import datetime
 
 # VecEnv Wrapper for RL training
 class VecEnvRLGames(VecEnvBase):
+
+    # def __init__():
+    #     super.__init__()
+    #     self._render = 'rgb_array'
 
     def _process_data(self):
         self._obs = torch.clamp(self._obs, -self._task.clip_obs, self._task.clip_obs).to(self._task.rl_device).clone()
@@ -54,6 +59,10 @@ class VecEnvRLGames(VecEnvBase):
         self.state_space = self._task.state_space
 
     def step(self, actions):
+        # Convert actions to a tensor if they aren't already
+        if not isinstance(actions, Tensor):
+            actions = torch.from_numpy(actions).float().to(self._task.device)
+
         actions = torch.clamp(actions, -self._task.clip_actions, self._task.clip_actions).to(self._task.device).clone()
 
         if self._task.randomize_actions:
@@ -77,10 +86,11 @@ class VecEnvRLGames(VecEnvBase):
 
         return obs_dict, self._rew, self._resets, self._extras
 
-    def reset(self):
-        """ Resets the task and applies default zero actions to recompute observations and states. """
+    def reset(self, **kwargs):
+        """Resets the task and applies default zero actions to recompute observations and states.
+        Accepts any additional keyword arguments to ensure compatibility with external wrappers or libraries."""
         now = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-        print(f"[{now}] Running RL reset")
+        print(f"[{now}] Running RL reset with additional parameters: {kwargs}")  # Optional: Loggen der zusätzlichen Parameter
 
         self._task.reset()
         actions = torch.zeros((self.num_envs, self._task.num_actions), device=self._task.device)

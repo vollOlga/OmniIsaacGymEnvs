@@ -42,6 +42,11 @@ class ReacherTask(RLTask):
         self.rot_reward_scale = self._task_cfg["env"]["rotRewardScale"] # Rotation reward scaling factor
         self.action_penalty_scale = self._task_cfg["env"]["actionPenaltyScale"] # Action penalty scaling factor
         
+        self.episode_rewards = torch.zeros(self._num_envs, dtype=torch.float, device=self.device)
+        self.episode_lengths = torch.zeros(self._num_envs, dtype=torch.long, device=self.device)
+        self.episode_count = 0
+
+        
         # Performance and success metrics
         self.success_tolerance = self._task_cfg["env"]["successTolerance"]  #Tolerance for success in reaching the goal
         self.reach_goal_bonus = self._task_cfg["env"]["reachGoalBonus"] # Bonus for reaching the goal
@@ -91,6 +96,12 @@ class ReacherTask(RLTask):
         self.av_factor = torch.tensor(self.av_factor, dtype=torch.float, device=self.device) # Tensor for averaging factor
         self.total_successes = 0
         self.total_resets = 0
+
+        # Metriks
+        self.cumulative_rewards = torch.zeros(self._num_envs, dtype=torch.float, device=self.device)
+        self.goal_distances = torch.zeros(self._num_envs, dtype=torch.float, device=self.device)
+        self.episode_rewards = []
+        self.episode_goal_distances = []
         return
 
     def set_up_scene(self, scene: Scene) -> None:
@@ -245,33 +256,117 @@ class ReacherTask(RLTask):
         indices = torch.arange(self._num_envs, dtype=torch.int64, device=self._device)
         self.reset_idx(indices)
 
+    # def calculate_metrics(self):
+    #     """
+    #     Calculate and update metrics after each step, including rewards and success tracking.
+    #     """
+    #     self.fall_dist = 0  # Distance fallen, used for calculating fall penalty
+    #     self.fall_penalty = 0  # Penalty for falling, if applicable
+
+    #     # Compute rewards and update buffers and success counts
+    #     rewards, resets, goal_resets, progress, successes, cons_successes = compute_arm_reward(
+    #         self.rew_buf, self.reset_buf, self.reset_goal_buf, self.progress_buf, self.successes,
+    #         self.consecutive_successes, self.max_episode_length, self.object_pos, self.object_rot,
+    #         self.goal_pos, self.goal_rot, self.dist_reward_scale, self.rot_reward_scale, self.rot_eps,
+    #         self.actions, self.action_penalty_scale, self.success_tolerance, self.reach_goal_bonus,
+    #         self.fall_dist, self.fall_penalty, self.max_consecutive_successes, self.av_factor
+    #     )
+
+    #     # Update the accumulated rewards and steps
+    #     self.episode_rewards += rewards
+    #     self.episode_lengths += 1
+
+    #     # Handle resets: calculate average rewards and reset counters
+    #     resets_indices = torch.nonzero(resets).squeeze(-1)
+    #     if len(resets_indices) > 0:
+    #         self.print_episode_stats(resets_indices)
+    #         self.episode_rewards[resets_indices] = 0
+    #         self.episode_lengths[resets_indices] = 0
+
+    #     # Update buffers
+    #     self.rew_buf, self.reset_buf, self.reset_goal_buf, self.progress_buf, self.successes, self.consecutive_successes = rewards, resets, goal_resets, progress, successes, cons_successes
+
+    #     # Update extras with average consecutive successes
+    #     self.extras['consecutive_successes'] = cons_successes.mean()
+
+    #     # Print success statistics if enabled
+    #     if self.print_success_stat:
+    #         self.total_resets += resets.sum()
+    #         direct_average_successes = successes.sum()
+    #         self.total_successes += (successes * resets).sum()
+    #         # The direct average shows the overall result more quickly, but slightly undershoots long term policy performance.
+    #         if self.total_resets > 0:
+    #             print("Direct average consecutive successes = {:.1f}".format(direct_average_successes / self.total_resets))
+    #             print("Post-Reset average consecutive successes = {:.1f}".format(self.total_successes / self.total_resets))
+
     def calculate_metrics(self):
         """
         Calculate and update metrics after each step, including rewards and success tracking.
         """
-        self.fall_dist = 0 # Distance fallen, used for calculating fall penalty
-        self.fall_penalty = 0 # Penalty for falling, if applicable
+        self.fall_dist = 0  # Distance fallen, used for calculating fall penalty
+        self.fall_penalty = 0  # Penalty for falling, if applicable
 
         # Compute rewards and update buffers and success counts
-        self.rew_buf[:], self.reset_buf[:], self.reset_goal_buf[:], self.progress_buf[:], self.successes[:], self.consecutive_successes[:] = compute_arm_reward(
-            self.rew_buf, self.reset_buf, self.reset_goal_buf, self.progress_buf, self.successes, self.consecutive_successes,
-            self.max_episode_length, self.object_pos, self.object_rot, self.goal_pos, self.goal_rot,
-            self.dist_reward_scale, self.rot_reward_scale, self.rot_eps, self.actions, self.action_penalty_scale,
-            self.success_tolerance, self.reach_goal_bonus, self.fall_dist, self.fall_penalty,
-            self.max_consecutive_successes, self.av_factor,
+        rewards, resets, goal_resets, progress, successes, cons_successes = compute_arm_reward(
+            self.rew_buf, self.reset_buf, self.reset_goal_buf, self.progress_buf, self.successes,
+            self.consecutive_successes, self.max_episode_length, self.object_pos, self.object_rot,
+            self.goal_pos, self.goal_rot, self.dist_reward_scale, self.rot_reward_scale, self.rot_eps,
+            self.actions, self.action_penalty_scale, self.success_tolerance, self.reach_goal_bonus,
+            self.fall_dist, self.fall_penalty, self.max_consecutive_successes, self.av_factor
         )
 
-        self.extras['consecutive_successes'] = self.consecutive_successes.mean() # Update extras with average consecutive successes
+        # Update the accumulated rewards and steps
+        self.cumulative_rewards += rewards
+        self.extras['cumulative reward'] = self.cumulative_rewards
+        self.goal_distances += torch.norm(self.object_pos - self.goal_pos, p=2, dim=-1)
+
+        self.episode_lengths += 1
+
+        # Handle resets: calculate average rewards and reset counters
+        resets_indices = torch.nonzero(resets).squeeze(-1)
+        if len(resets_indices) > 0:
+            average_rewards = self.cumulative_rewards[resets_indices] / self.episode_lengths[resets_indices]
+            average_distances = self.goal_distances[resets_indices] / self.episode_lengths[resets_indices]
+
+            self.extras['Average reward'] = average_rewards
+            self.extras['Average goal distances'] = average_distances
+
+            # Logging and printing for debugging or monitoring
+            for idx, avg_reward, avg_dist in zip(resets_indices, average_rewards, average_distances):
+                print(f'Episode {self.episode_count}: Environment {idx} - Average Reward: {avg_reward.item()}, Average Goal Distance: {avg_dist.item()}')
+                #self.extras[f'Average Reward environment{idx}'] = avg_reward.item()
+                #self.extras[f'Average Goal Distance environment{idx}'] = avg_dist.item()
+
+                self.episode_count += 1
+
+            # Reset the cumulative counters for the next episode
+            self.cumulative_rewards[resets_indices] = 0
+            self.goal_distances[resets_indices] = 0
+            self.episode_lengths[resets_indices] = 0
+
+        # Update buffers
+        self.rew_buf, self.reset_buf, self.reset_goal_buf, self.progress_buf, self.successes, self.consecutive_successes = rewards, resets, goal_resets, progress, successes, cons_successes
+
+        # Update extras with average consecutive successes
+        self.extras['consecutive_successes'] = cons_successes.mean()
 
         # Print success statistics if enabled
         if self.print_success_stat:
-            self.total_resets = self.total_resets + self.reset_buf.sum()
-            direct_average_successes = self.total_successes + self.successes.sum()
-            self.total_successes = self.total_successes + (self.successes * self.reset_buf).sum()
+            self.total_resets += resets.sum()
+            direct_average_successes = successes.sum()
+            self.total_successes += (successes * resets).sum()
             # The direct average shows the overall result more quickly, but slightly undershoots long term policy performance.
-            print("Direct average consecutive successes = {:.1f}".format(direct_average_successes/(self.total_resets + self.num_envs)))
             if self.total_resets > 0:
-                print("Post-Reset average consecutive successes = {:.1f}".format(self.total_successes/self.total_resets))
+                print("Direct average consecutive successes = {:.1f}".format(direct_average_successes / self.total_resets))
+                print("Post-Reset average consecutive successes = {:.1f}".format(self.total_successes / self.total_resets))
+
+    
+    def print_episode_stats(self, resets_indices):
+        for idx in resets_indices:
+            average_reward = self.episode_rewards[idx] / self.episode_lengths[idx]
+            print(f'Episode {self.episode_count}: Environment {idx} - Average Reward: {average_reward.item()}')
+            self.episode_count += 1
+
 
     def pre_physics_step(self, actions):
         """
@@ -409,6 +504,9 @@ class ReacherTask(RLTask):
         self.reset_buf[env_ids] = 0  # Reset environment buffer
         self.successes[env_ids] = 0  # Reset successes count
 
+        self.cumulative_rewards[env_ids] = 0
+        self.goal_distances[env_ids] = 0
+
 
 #####################################################################
 ###=========================jit functions=========================###
@@ -479,6 +577,7 @@ def compute_arm_reward(
     rot_dist = 2.0 * torch.asin(torch.clamp(torch.norm(quat_diff[:, 1:4], p=2, dim=-1), max=1.0))  # Compute angular difference
 
     # Calculate distance and rotation rewards
+
     dist_rew = goal_dist * dist_reward_scale
     rot_rew = 1.0/(torch.abs(rot_dist) + rot_eps) * rot_reward_scale
 
@@ -515,5 +614,5 @@ def compute_arm_reward(
     finished_cons_successes = torch.sum(successes * resets.float())
 
     cons_successes = torch.where(num_resets > 0, av_factor*finished_cons_successes/num_resets + (1.0 - av_factor)*consecutive_successes, consecutive_successes)
-    print(f'Cons success: {cons_successes}')
+    #print(f'Cons success: {cons_successes}')
     return reward, resets, goal_resets, progress_buf, successes, cons_successes

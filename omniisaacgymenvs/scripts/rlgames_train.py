@@ -29,8 +29,8 @@
 
 import datetime
 import os
-import gymnasium as gym
-from gymnasium.wrappers import RecordVideo
+import gym
+#from gymnasium.wrappers import RecordVideo
 import hydra
 import torch
 from omegaconf import DictConfig
@@ -138,6 +138,7 @@ def parse_hydra_configs(cfg: DictConfig):
         enable_livestream=cfg.enable_livestream,
         enable_viewport=enable_viewport or cfg.enable_recording,
         experience=experience
+        #render_mode = 'rgb_array'
     )
     #print(env_configurations)
 
@@ -159,9 +160,8 @@ def parse_hydra_configs(cfg: DictConfig):
         else:
             env.metadata["render_modes"] = ["rgb_array"]
             env.metadata["render_fps"] = cfg.recording_fps
-        env = RecordVideo(
-            env, video_folder=videos_dir, step_trigger=video_interval, video_length=video_length
-        )
+        env = gym.wrappers.RecordVideo(
+            env, video_folder=videos_dir, step_trigger=video_interval, video_length=video_length)
 
     # ensure checkpoints can be specified as relative paths
     if cfg.checkpoint:
@@ -198,6 +198,20 @@ def parse_hydra_configs(cfg: DictConfig):
             name=run_name,
             resume="allow",
         )
+
+    if cfg.comet_ml_activate and global_rank == 0:
+        from comet_ml import Experiment
+        from comet_ml.integration.gymnasium import CometLogger
+
+        # Experiment konfigurieren
+        experiment = Experiment(api_key="RH7SFEagoEi1x16YNQHMtEmpU", project_name="UR10Reacher", workspace="vollolga")
+
+        # Anwenden des CometLogger auf die bestehende Umgebung
+        if isinstance(env, gym.wrappers.RecordVideo):
+            env.env = CometLogger(env.env, experiment)  # Zugriff auf die innere Umgebung, wenn ein Wrapper verwendet wird
+        else:
+            env = CometLogger(env, experiment)
+            
 
     #
 

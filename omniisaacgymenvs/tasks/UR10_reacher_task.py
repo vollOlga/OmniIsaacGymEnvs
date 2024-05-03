@@ -60,6 +60,7 @@ class UR10ReacherTask(ReacherTask):
         Return:
             None
         '''
+        self._device = "cuda:0" 
         self._sim_config = sim_config
         self._cfg = sim_config.config
         self._task_cfg = sim_config.task_config
@@ -70,7 +71,7 @@ class UR10ReacherTask(ReacherTask):
                 "Unknown type of observations!\nobservationType should be one of: [full]")
         print("Obs type:", self.obs_type)
         self.num_obs_dict = {
-            "full": 30,
+            "full": 29,
             # 6: UR10 joints position (action space)
             # 1: UR10 gripper
             # 6: UR10 joints velocity
@@ -132,6 +133,7 @@ class UR10ReacherTask(ReacherTask):
         Return:
             int: The number of degrees of freedom of the robot arm.
         '''
+        print(f'the number of degrees of freedom (DOF) for the robot arm: {self._arms.num_dof}')
         return self._arms.num_dof
 
     def get_arm(self):
@@ -221,8 +223,11 @@ class UR10ReacherTask(ReacherTask):
             new_pos[:, 2] = torch.abs(new_pos[:, 2] * 0.5) + 0.3
         else:
             new_pos[:, 0] = new_pos[:, 0] * 0.4 + 0.5 * torch.sign(new_pos[:, 0])
+            #print(f'new_pos[:, 0]: {new_pos[:, 0]}')
             new_pos[:, 1] = new_pos[:, 1] * 0.4 + 0.5 * torch.sign(new_pos[:, 1])
+            #print(f'new_pos[:, 1]: {new_pos[:, 1]}')
             new_pos[:, 2] = torch.abs(new_pos[:, 2] * 0.8) + 0.1
+            #print(f'new_pos[:, 2]: {new_pos[:, 2]}')
         if self._task_cfg['safety']['enabled']:
             new_pos[:, 0] = torch.abs(new_pos[:, 0]) / 1.25
             new_pos[:, 1] = torch.abs(new_pos[:, 1]) / 1.25
@@ -248,6 +253,7 @@ class UR10ReacherTask(ReacherTask):
             self.obs_buf[:, base+3:base+7] = self.goal_rot
             self.obs_buf[:, base+7:base+11] = quat_mul(self.object_rot, quat_conjugate(self.goal_rot))
             self.obs_buf[:, base+11:base+17] = self.actions
+            #print(f'Actions: {self.actions}')
 
     def send_joint_pos(self, joint_pos):
         '''
@@ -258,3 +264,4 @@ class UR10ReacherTask(ReacherTask):
             None: The function communicates with the real robot but does not return any value.
         '''
         self.real_world_ur10.send_joint_pos(joint_pos)
+        #print(f'joint positions: {joint_pos}')
