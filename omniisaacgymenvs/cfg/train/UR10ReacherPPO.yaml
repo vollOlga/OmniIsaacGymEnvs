@@ -49,6 +49,14 @@ params:
     reward_shaper:
       scale_value: 0.01
     normalize_advantage: True
+    #gamma: ${....sweep_config.parameters.gamma}
+    #tau: ${....sweep_config.parameters.tau}
+    #init_alpha: ${....train.config.batch_size}
+    #alpha_lr: ${....sweep_config.parameters.alpha_lr}
+    #actor_lr: ${....sweep_config.parameters.actor_lr}
+    #critic_lr: ${....sweep_config.parameters.critic_lr}
+    #critic_tau: ${....sweep_config.parameters.critic_tau}
+    #batch_size: ${....sweep_config.parameters.batch_size}
     gamma: 0.99
     tau: 0.001 #0.95, 0.005
     init_alpha: 1.0
