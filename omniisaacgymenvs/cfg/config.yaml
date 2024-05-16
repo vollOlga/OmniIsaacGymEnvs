@@ -8,7 +8,7 @@ experiment: ''
 num_envs: ''
 
 # seed - set to -1 to choose random seed
-seed: 12
+seed: 42
 # set to True for deterministic performance
 torch_deterministic: False
 
@@ -62,7 +62,7 @@ wandb_activate: True
 wandb_group: ''
 wandb_name: ${train.params.config.name}
 wandb_entity: 'voll-olga-ds'
-wandb_project: 'bachelor_thesis'
+wandb_project: 'UR10-bachelor-thesis'
 
 comet_ml_activate: False
 comet_ml_project: 'ur_10'

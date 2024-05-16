@@ -1,4 +1,3 @@
-
 # Copyright (c) 2018-2022, NVIDIA Corporation
 # Copyright (c) 2022-2023, Johnson Sun
 # All rights reserved.
@@ -39,15 +38,12 @@ import torch
 class UR10View(ArticulationView):
     """
     A specialized view for interacting with UR10 robotic arms in the simulation environment.
-
     This class extends `ArticulationView` to manage instances of UR10 robots, providing specific 
     functionalities to handle end effectors associated with these robotic arms.
-
     Attributes:
         _end_effectors (RigidPrimView): A view for the end effector of the UR10, allowing for
                                         interaction with and manipulation of the end effector's
                                         properties and state within the simulation.
-
     Args:
         prim_paths_expr (str): The expression used to locate the UR10 robots in the scene. This should
                                match the specific structure of your scene graph.
@@ -60,10 +56,8 @@ class UR10View(ArticulationView):
     ) -> None:
         """
         Initializes the UR10 view with the specified path expression and name.
-
         Calls the superclass initializer and sets up a view for the UR10's end effector
         using `RigidPrimView` to manage rigid transformation properties.
-
         Args:
             prim_paths_expr (str): The expression to locate UR10 robots in the simulation environment.
             name (Optional[str]): The name of the view. Defaults to "UR10View".
@@ -82,8 +76,8 @@ class UR10View(ArticulationView):
         """
         Initializes the view with a physics simulation view, ensuring that all components are
         properly synchronized with the physics state.
-
         Args:
             physics_sim_view: The simulation view associated with the physics engine being used.
         """
         super().initialize(physics_sim_view)
+

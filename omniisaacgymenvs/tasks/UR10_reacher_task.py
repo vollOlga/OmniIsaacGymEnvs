@@ -64,6 +64,7 @@ class UR10ReacherTask(ReacherTask):
         self._sim_config = sim_config
         self._cfg = sim_config.config
         self._task_cfg = sim_config.task_config
+        self.end_effectors_init_rot = torch.tensor([1, 0, 0, 0], device=self._device) # w, x, y, z
 
         self.obs_type = self._task_cfg["env"]["observationType"]
         if not (self.obs_type in ["full"]):
@@ -71,14 +72,16 @@ class UR10ReacherTask(ReacherTask):
                 "Unknown type of observations!\nobservationType should be one of: [full]")
         print("Obs type:", self.obs_type)
         self.num_obs_dict = {
-            "full": 29,
+            "full": 32,
             # 6: UR10 joints position (action space)
-            # 1: UR10 gripper
+            # 1: UR10 gripper (position)
             # 6: UR10 joints velocity
+            # 1: UR10 gripper velocity
             # 3: goal position
             # 4: goal rotation
             # 4: goal relative rotation
             # 6: previous action
+            # 1: previous action gripper
         }
 
         self.object_scale = torch.tensor([1.0] * 3)

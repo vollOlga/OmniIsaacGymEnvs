@@ -12,6 +12,7 @@ from omni.isaac.gym.vec_env import VecEnvBase
 
 import numpy as np
 import torch
+import random
 
 
 class ReacherTask(RLTask):
@@ -211,12 +212,41 @@ class ReacherTask(RLTask):
         # Apply configuration settings from simulation to the object
         self._sim_config.apply_articulation_settings("object", get_prim_at_path(obj.prim_path), self._sim_config.parse_actor_config("object"))
 
+    # def get_goal(self):
+    #     self.goal_displacement_tensor = torch.tensor([0.0, 0.0, 0.0], device=self.device)
+    #     self.goal_start_translation = torch.tensor([0.0, 0.0, 0.0], device=self.device) + self.goal_displacement_tensor
+    #     self.goal_start_orientation = torch.tensor([1.0, 0.0, 0.0, 0.0], device=self.device)
+
+    #     self.goal_usd_path = f"{self._assets_root_path}/Isaac/Props/Blocks/block_instanceable.usd"
+    #     add_reference_to_stage(self.goal_usd_path, self.default_zero_env_path + "/goal")
+    #     goal = XFormPrim(
+    #         prim_path=self.default_zero_env_path + "/goal/object",
+    #         name="goal",
+    #         translation=self.goal_start_translation,
+    #         orientation=self.goal_start_orientation,
+    #         scale=self.goal_scale
+    #     )
+    #     self._sim_config.apply_articulation_settings("goal", get_prim_at_path(goal.prim_path), self._sim_config.parse_actor_config("goal_object"))
+
+    import random
+
     def get_goal(self):
+        # Liste der möglichen Zielobjekte
+        possible_goals = [
+            f"{self._assets_root_path}/Isaac/Props/Blocks/block_instanceable.usd",
+            f"{self._assets_root_path}/Isaac/Props/Cylinders/cylinder_instanceable.usd",
+            f"{self._assets_root_path}/Isaac/Props/Spheres/sphere_instanceable.usd"
+        ]
+
+        # Zufällige Auswahl eines Zielobjekts
+        self.goal_usd_path = random.choice(possible_goals)
+
+        # Basisinitialisierungen
         self.goal_displacement_tensor = torch.tensor([0.0, 0.0, 0.0], device=self.device)
         self.goal_start_translation = torch.tensor([0.0, 0.0, 0.0], device=self.device) + self.goal_displacement_tensor
         self.goal_start_orientation = torch.tensor([1.0, 0.0, 0.0, 0.0], device=self.device)
 
-        self.goal_usd_path = f"{self._assets_root_path}/Isaac/Props/Blocks/block_instanceable.usd"
+        # Hinzufügen des Referenzpfades zur Bühne
         add_reference_to_stage(self.goal_usd_path, self.default_zero_env_path + "/goal")
         goal = XFormPrim(
             prim_path=self.default_zero_env_path + "/goal/object",
@@ -225,36 +255,39 @@ class ReacherTask(RLTask):
             orientation=self.goal_start_orientation,
             scale=self.goal_scale
         )
+
+        # Anwenden der Konfigurationseinstellungen
         self._sim_config.apply_articulation_settings("goal", get_prim_at_path(goal.prim_path), self._sim_config.parse_actor_config("goal_object"))
 
-    def post_reset(self):
-        """
-        Actions to perform after environment reset, including setting initial poses and calculating new targets.
-        """
-        self.num_arm_dofs = self.get_num_dof() # Retrieve the number of degrees of freedom for the arm
-        self.actuated_dof_indices = torch.arange(self.num_arm_dofs, dtype=torch.long, device=self.device) # Indices of actuated degrees of freedom
+        
+        def post_reset(self):
+            """
+            Actions to perform after environment reset, including setting initial poses and calculating new targets.
+            """
+            self.num_arm_dofs = self.get_num_dof() # Retrieve the number of degrees of freedom for the arm
+            self.actuated_dof_indices = torch.arange(self.num_arm_dofs, dtype=torch.long, device=self.device) # Indices of actuated degrees of freedom
 
-        # Initialize targets and limits for arm degrees of freedom
-        self.arm_dof_targets = torch.zeros((self.num_envs, self._arms.num_dof), dtype=torch.float, device=self.device)
+            # Initialize targets and limits for arm degrees of freedom
+            self.arm_dof_targets = torch.zeros((self.num_envs, self._arms.num_dof), dtype=torch.float, device=self.device)
 
-        self.prev_targets = torch.zeros((self.num_envs, self.num_arm_dofs), dtype=torch.float, device=self.device)
-        self.cur_targets = torch.zeros((self.num_envs, self.num_arm_dofs), dtype=torch.float, device=self.device)
+            self.prev_targets = torch.zeros((self.num_envs, self.num_arm_dofs), dtype=torch.float, device=self.device)
+            self.cur_targets = torch.zeros((self.num_envs, self.num_arm_dofs), dtype=torch.float, device=self.device)
 
-        dof_limits = self._dof_limits
-        self.arm_dof_lower_limits, self.arm_dof_upper_limits = torch.t(dof_limits[0].to(self.device))
+            dof_limits = self._dof_limits
+            self.arm_dof_lower_limits, self.arm_dof_upper_limits = torch.t(dof_limits[0].to(self.device))
 
-        self.arm_dof_default_pos = torch.zeros(self.num_arm_dofs, dtype=torch.float, device=self.device) # Default position for arm degrees of freedom
-        self.arm_dof_default_vel = torch.zeros(self.num_arm_dofs, dtype=torch.float, device=self.device) # Default velocity for arm degrees of freedom
+            self.arm_dof_default_pos = torch.zeros(self.num_arm_dofs, dtype=torch.float, device=self.device) # Default position for arm degrees of freedom
+            self.arm_dof_default_vel = torch.zeros(self.num_arm_dofs, dtype=torch.float, device=self.device) # Default velocity for arm degrees of freedom
 
-        # Retrieve initial poses for end effectors and goals
-        self.end_effectors_init_pos, self.end_effectors_init_rot = self._arms._end_effectors.get_world_poses()
+            # Retrieve initial poses for end effectors and goals
+            self.end_effectors_init_pos, self.end_effectors_init_rot = self._arms._end_effectors.get_world_poses()
 
-        self.goal_pos, self.goal_rot = self._goals.get_world_poses()
-        self.goal_pos -= self._env_pos # Adjust goal position relative to environment position
+            self.goal_pos, self.goal_rot = self._goals.get_world_poses()
+            self.goal_pos -= self._env_pos # Adjust goal position relative to environment position
 
-        # randomize all envs
-        indices = torch.arange(self._num_envs, dtype=torch.int64, device=self._device)
-        self.reset_idx(indices)
+            # randomize all envs
+            indices = torch.arange(self._num_envs, dtype=torch.int64, device=self._device)
+            self.reset_idx(indices)
 
     # def calculate_metrics(self):
     #     """

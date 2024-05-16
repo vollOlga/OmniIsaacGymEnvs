@@ -35,7 +35,7 @@ import torch
 from omegaconf import DictConfig
 import omniisaacgymenvs
 from omniisaacgymenvs.envs.vec_env_rlgames import VecEnvRLGames
-from omniisaacgymenvs.scripts.rlgames_train import RLGTrainer
+from omniisaacgymenvs.scripts.rlgames_train_1 import RLGTrainer
 from omniisaacgymenvs.utils.config_utils.path_utils import retrieve_checkpoint_path
 from omniisaacgymenvs.utils.demo_util import initialize_demo
 from omniisaacgymenvs.utils.hydra_cfg.hydra_utils import *

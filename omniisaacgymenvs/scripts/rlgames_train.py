@@ -44,13 +44,14 @@ from omniisaacgymenvs.utils.rlgames.rlgames_utils import RLGPUAlgoObserver, RLGP
 from omniisaacgymenvs.utils.task_util import initialize_task
 from rl_games.common import env_configurations, vecenv
 from rl_games.torch_runner import Runner
+import wandb
 
 
 class RLGTrainer:
     """
     Class to configure and manage the training process for reinforcement learning using RL Games and Hydra configurations.
     """
-    def __init__(self, cfg, cfg_dict, sweep_id=None):
+    def __init__(self, cfg, cfg_dict):
         '''
         Initializes the RLGTrainer with the configuration settings.
         Parameters:
@@ -105,129 +106,6 @@ class RLGTrainer:
         runner.run(
             {"train": not self.cfg.test, "play": self.cfg.test, "checkpoint": self.cfg.checkpoint, "sigma": None}
         )
-
-
-@hydra.main(version_base=None, config_name="config", config_path="../cfg")
-# def parse_hydra_configs(cfg: DictConfig):
-#     '''
-#     The main function to parse configurations using Hydra, set up the environment, and execute the RL training.
-#     Parameters:
-#         cfg (DictConfig): Configuration object provided by Hydra based on YAML files and command line arguments.
-#     Return:
-#         None
-#     '''
-
-#     time_str = datetime.datetime.now().strftime("%Y-%m-%d_%H-%M-%S")
-
-#     headless = cfg.headless
-
-#     # local rank (GPU id) in a current multi-gpu mode
-#     local_rank = int(os.getenv("LOCAL_RANK", "0"))
-#     # global rank (GPU id) in multi-gpu multi-node mode
-#     global_rank = int(os.getenv("RANK", "0"))
-#     if cfg.multi_gpu:
-#         cfg.device_id = local_rank
-#         cfg.rl_device = f'cuda:{local_rank}'
-#     enable_viewport = "enable_cameras" in cfg.task.sim and cfg.task.sim.enable_cameras
-
-#     # select kit app file
-#     experience = get_experience(headless, cfg.enable_livestream, enable_viewport, cfg.enable_recording, cfg.kit_app)
-    
-#     # Initialize Environment
-#     env = VecEnvRLGames(
-#         headless=headless,
-#         sim_device=cfg.device_id,
-#         enable_livestream=cfg.enable_livestream,
-#         enable_viewport=enable_viewport or cfg.enable_recording,
-#         experience=experience
-#         #render_mode = 'rgb_array'
-#     )
-#     #print(env_configurations)
-
-#     # parse experiment directory
-#     module_path = os.path.abspath(os.path.join(os.path.dirname(omniisaacgymenvs.__file__)))
-#     experiment_dir = os.path.join(module_path, "runs", cfg.train.params.config.name)
-
-#     # use gym RecordVideo wrapper for viewport recording
-#     if cfg.enable_recording:
-#         if cfg.recording_dir == '':
-#             videos_dir = os.path.join(experiment_dir, "videos")
-#         else:
-#             videos_dir = cfg.recording_dir
-#         video_interval = lambda step: step % cfg.recording_interval == 0
-#         video_length = cfg.recording_length
-#         env.is_vector_env = True
-#         if env.metadata is None:
-#             env.metadata = {"render_modes": ["rgb_array"], "render_fps": cfg.recording_fps}
-#         else:
-#             env.metadata["render_modes"] = ["rgb_array"]
-#             env.metadata["render_fps"] = cfg.recording_fps
-#         env = gym.wrappers.RecordVideo(
-#             env, video_folder=videos_dir, step_trigger=video_interval, video_length=video_length)
-
-#     # ensure checkpoints can be specified as relative paths
-#     if cfg.checkpoint:
-#         cfg.checkpoint = retrieve_checkpoint_path(cfg.checkpoint)
-#         if cfg.checkpoint is None:
-#             quit()
-
-#     cfg_dict = omegaconf_to_dict(cfg)
-#     print_dict(cfg_dict)
-
-#     # sets seed. if seed is -1 will pick a random one
-#     from omni.isaac.core.utils.torch.maths import set_seed
-#     cfg.seed = cfg.seed + global_rank if cfg.seed != -1 else cfg.seed
-#     cfg.seed = set_seed(cfg.seed, torch_deterministic=cfg.torch_deterministic)
-#     cfg_dict["seed"] = cfg.seed
-
-#     # initialize task
-#     task = initialize_task(cfg_dict, env)
-
-#     # initialize wandb
-
-#     if cfg.wandb_activate and global_rank == 0:
-#         # Make sure to install WandB if you actually use this.
-#         import wandb
-
-#         run_name = f"{cfg.wandb_name}_tau={cfg.train.params.tau}_lr={cfg.train.params.lr}_num_warmup_steps={cfg.train.params.num_warmup_steps}_{time_str}"
-
-#         if sweep_id:
-#             run_name += f"_sweep={sweep_id}"
-        
-#         wandb.init(
-#             project=cfg.wandb_project,
-#             group=cfg.wandb_group,
-#             entity=cfg.wandb_entity,
-#             config=cfg_dict,
-#             sync_tensorboard=True,
-#             name=run_name,
-#             resume="allow",
-#         )
-
-#     if cfg.comet_ml_activate and global_rank == 0:
-#         from comet_ml import Experiment
-#         from comet_ml.integration.gymnasium import CometLogger
-
-#         # Experiment konfigurieren
-#         experiment = Experiment(api_key="RH7SFEagoEi1x16YNQHMtEmpU", project_name="UR10Reacher", workspace="vollolga")
-
-#         # Anwenden des CometLogger auf die bestehende Umgebung
-#         if isinstance(env, gym.wrappers.RecordVideo):
-#             env.env = CometLogger(env.env, experiment)  # Zugriff auf die innere Umgebung, wenn ein Wrapper verwendet wird
-#         else:
-#             env = CometLogger(env, experiment)
-            
-
-#     #
-
-#     torch.cuda.set_device(local_rank)
-#     rlg_trainer = RLGTrainer(cfg, cfg_dict)
-#     rlg_trainer.launch_rlg_hydra(env)
-#     rlg_trainer.run(module_path, experiment_dir)
-#     env.close()
-
-#     if cfg.wandb_activate and global_rank == 0:
-#         wandb.finish()
 
 @hydra.main(version_base=None, config_name="config", config_path="../cfg")
 def parse_hydra_configs(cfg: DictConfig, sweep_id: str = None):
@@ -318,92 +196,34 @@ def parse_hydra_configs(cfg: DictConfig, sweep_id: str = None):
         # Make sure to install WandB if you actually use this.
         import wandb
 
-        sweep_config = {
-            'method': 'random'
-        }
-        metric = {
-            'name': 'reward',
-            'goal': 'maximize'   
-        }
-        parameters = {
-            'hidden_layer_size': {'values': cfg_dict['train']['params']['network']['mlp']['hidden_layer_size']},
-            'learn_rate': {'values': cfg_dict['train']['params']['config']['learning_rate']},
-            'gamma': {'values': cfg_dict['train']['params']['config']['gamma']},
-            'tau': {'values': cfg_dict['train']['params']['config']['tau']},
-            'alpha_lr': {'values': cfg_dict['train']['params']['config']['alpha_lr']},
-            'actor_lr': {'values': cfg_dict['train']['params']['config']['actor_lr']},
-            'critic_lr': {'values': cfg_dict['train']['params']['config']['critic_lr']},
-            'critic_tau': {'values': cfg_dict['train']['params']['config']['critic_tau']},
-            'batch_size': {'values': cfg_dict['train']['params']['config']['batch_size']},
-            'optimizer': {'values': ['adam', 'sgd']},
-            "num_warmup_steps": cfg_dict['train']['params']['config']['num_warmup_steps'],
-        }
-
-        parameters.update({
-            'learning_rate': {
-            # a flat distribution between 0 and 0.1
-            'distribution': 'uniform',
-            'min': 0,
-            'max': 0.1
-            },
-            'batch_size': {
-            # integers between 32 and 256
-            # with evenly-distributed logarithms 
-            'distribution': 'q_log_uniform_values',
-            'q': 8,
-            'min': 32,
-            'max': 1024,
-            }
-        })
-        sweep_config['metric'] = metric
-        sweep_config['parameters'] = parameters
-        print(f'sweep_config is {sweep_config}')
-
         tau = cfg_dict['train']['params']['config']['tau'],
-        lr = cfg_dict['train']['params']['config']['actor_lr'],
+        actor_lr = cfg_dict['train']['params']['config']['actor_lr'],
         num_warmup_steps = cfg_dict['train']['params']['config']['num_warmup_steps'],
         learning_rate = cfg_dict['train']['params']['config']['learning_rate']
-        network_name = cfg_dict['train']['params']['model']
+        network_name = cfg_dict['train']['params']['model']['name']
+        kl = cfg_dict['train']['params']['config']['kl_threshold']
+
 
             # Add all other hyperparameters here
-        run_name = f"{cfg.wandb_name}_tau={tau}_lr={lr}_num_warmup_steps={num_warmup_steps}_model={network_name}_{time_str}"
+        #run_name = f"{cfg.wandb_name}_tau={tau}_model={network_name}_learning_rate_{learning_rate}_kl_{kl}_{time_str}"
 
-        # Initialize Wandb with sweep configuration if sweep_id is provided
-        if sweep_id:
-            run_name += f"_sweep={sweep_id}"
+        run_name = f"{cfg.wandb_name}_gripper_tau={tau}_lr={actor_lr}_num_warmup_steps={num_warmup_steps}_model={network_name}_learning_rate_{learning_rate}_kl_{kl}_{time_str}"
 
         #sweep_id = wandb.sweep(sweep_config, project="pytorch-sweeps-demo")
 
-        def initialise_wandb():
-            wandb.init(
-                project=cfg.wandb_project,
-                group=cfg.wandb_group,
-                entity=cfg.wandb_entity,
-                config=cfg_dict,
-                sync_tensorboard=True,
-                name=run_name,
-                resume="allow",
-            )
 
-        sweep_id = wandb.sweep(sweep=sweep_config,
-                                project= 'UR10_sweep')
-
-        wandb.agent(sweep_id, function=initialise_wandb, count=10)
-
-        # Log the hyperparameters as a list in Wandb
-        hyperparameters = {
-            "tau": cfg_dict['train']['params']['config']['tau'],
-            "lr": cfg_dict['train']['params']['config']['actor_lr'],
-            "num_warmup_steps": cfg_dict['train']['params']['config']['num_warmup_steps'],
-            'learning_rate': cfg_dict['train']['params']['config']['learning_rate'],
-            'network_name': cfg_dict['train']['params']['model'],
-
-            # Add all other hyperparameters here
-        }
-        wandb.config.update(hyperparameters)
+        wandb.init(
+            project=cfg.wandb_project,
+            group=cfg.wandb_group,
+            entity=cfg.wandb_entity,
+            config=cfg_dict,
+            sync_tensorboard=True,
+            name=run_name,
+            resume="allow",
+        )
 
     torch.cuda.set_device(local_rank)
-    rlg_trainer = RLGTrainer(cfg, cfg_dict, sweep_id=sweep_id)
+    rlg_trainer = RLGTrainer(cfg, cfg_dict)
     rlg_trainer.launch_rlg_hydra(env)
     rlg_trainer.run(module_path, experiment_dir)
     env.close()

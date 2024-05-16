@@ -126,3 +126,9 @@ def convert_asset_instanceable(asset_usd_path, source_prim_path, save_as_path=No
         omni.usd.get_context().save_stage()
     else:
         omni.usd.get_context().save_as_stage(save_as_path)
+
+
+if __name__ == '__main__':
+    asset_usd_path = '' 
+    source_prim_path = ''
+    
