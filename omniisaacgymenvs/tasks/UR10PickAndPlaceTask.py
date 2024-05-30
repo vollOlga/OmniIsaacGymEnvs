@@ -13,7 +13,6 @@ import numpy as np
 import torch
 import math
 
-
 class Ur10Assets:
     """
     Class for managing the asset paths for the UR10 robot simulation.

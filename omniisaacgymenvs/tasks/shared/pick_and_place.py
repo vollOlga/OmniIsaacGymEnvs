@@ -609,7 +609,6 @@ def randomize_rotation(rand0, rand1, x_unit_tensor, y_unit_tensor):
     return quat_mul(quat_from_angle_axis(rand0 * np.pi, x_unit_tensor),
                     quat_from_angle_axis(rand1 * np.pi, y_unit_tensor))
 
-
 @torch.jit.script
 def compute_arm_reward(
         rew_buf, reset_buf, reset_goal_buf, progress_buf, successes, consecutive_successes,
