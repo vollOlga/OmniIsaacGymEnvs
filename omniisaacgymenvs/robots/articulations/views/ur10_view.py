@@ -32,8 +32,28 @@ from typing import Optional
 
 from omni.isaac.core.articulations import ArticulationView
 from omni.isaac.core.prims import RigidPrimView
+#from omni.isaac.surface_gripper import SurfaceGripper
 
 import torch
+
+class DummyGripper:
+    def __init__(self, end_effector_prim_path, translate, direction):
+        self.end_effector_prim_path = end_effector_prim_path
+        self.translate = translate
+        self.direction = direction
+
+    def is_holding_object(self):
+        # Implement logic to determine if the gripper is holding an object
+        return False
+
+    def open(self):
+        # Implement logic to open the gripper
+        pass
+
+    def close(self):
+        # Implement logic to close the gripper
+        pass
+
 
 class UR10View(ArticulationView):
     """
@@ -70,7 +90,13 @@ class UR10View(ArticulationView):
         )
 
         # Use RigidPrimView instead of XFormPrimView, since the XForm is not updated when running
-        self._end_effectors = RigidPrimView(prim_paths_expr="/World/envs/.*/ur10/ee_link", name="end_effector_view", reset_xform_properties=False)
+        self._end_effectors = RigidPrimView(prim_paths_expr="/World/envs/.*/ur10/ee_link", 
+                                            name="end_effector_view", 
+                                            reset_xform_properties=False)
+        
+        self.suction_gripper = DummyGripper(
+            end_effector_prim_path="/World/envs/.*/ur10/ee_link", translate=0.162, direction="x"
+        )
 
     def initialize(self, physics_sim_view):
         """

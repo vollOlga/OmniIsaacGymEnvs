@@ -5,7 +5,9 @@ from omniisaacgymenvs.robots.articulations.UR10 import UR10
 
 from omni.isaac.core.utils.prims import get_prim_at_path
 from omni.isaac.core.utils.torch import *
+from omni.isaac.core.utils.stage import get_current_stage  # Import get_current_stage
 from omni.isaac.gym.vec_env import VecEnvBase
+from omni.isaac.core.scenes.scene import Scene  # Import Scene class
 
 import numpy as np
 import torch
@@ -25,19 +27,6 @@ class UR10PickAndPlaceTask(PickAndPlaceTask):
 
         self.num_obs_dict = {
             "full": 43,
-            # Updated to include place_goal observations
-            # 6: UR10 joints position (action space)
-            # 1: UR10 gripper (position)
-            # 6: UR10 joints velocity
-            # 1: UR10 gripper velocity
-            # 3: goal position
-            # 4: goal rotation
-            # 4: goal relative rotation
-            # 3: place_goal position
-            # 4: place_goal rotation
-            # 4: place_goal relative rotation
-            # 6: previous action
-            # 1: previous action gripper
         }
 
         self.object_scale = torch.tensor([1.0] * 3)
@@ -82,22 +71,60 @@ class UR10PickAndPlaceTask(PickAndPlaceTask):
         self.episode_rewards = torch.zeros(self._num_envs, dtype=torch.float, device=self.device)
         self.episode_count = 0
 
+    def set_up_scene(self, scene: Scene) -> None:
+        self._stage = get_current_stage()  # Get the current USD stage
+        self._assets_root_path = 'omniverse://localhost/Projects/J3soon/Isaac/2023.1.1'  # Path to assets
+
+        # Retrieve and set up arm, object, and goal elements in the scene
+        self.get_arm()
+        self.get_object()
+        self.get_goal()
+        self.get_place_goal()
+
+        super().set_up_scene(scene)  # Call to superclass method to complete scene setup
+
+        # Create views for arms, objects, and goals
+        self._arms = self.get_arm_view(scene)
+        self._objects = RigidPrimView(
+            prim_paths_expr="/World/envs/env_.*/object/object",
+            name="object_view",
+            reset_xform_properties=False,
+        )
+        scene.add(self._objects)
+        
+        self._goals = RigidPrimView(
+            prim_paths_expr="/World/envs/env_.*/goal/object",
+            name="goal_view",
+            reset_xform_properties=False,
+        )
+        scene.add(self._goals)
+
+        # Initialize grippers
+        self.grippers = [arm.suction_gripper for arm in self._arms]
+
+    def get_arm_view(self, scene):
+        arm_view = UR10View(prim_paths_expr="/World/envs/.*/ur10", name=f"ur10_view_{id(self)}")
+        scene.add(arm_view._end_effectors)
+        return arm_view
+
     def get_num_dof(self):
         print(f'the number of degrees of freedom (DOF) for the robot arm: {self._arms.num_dof}')
         return self._arms.num_dof
 
     def get_arm(self):
+        '''
+        Configures and retrieves an instance of the UR10 robot arm.
+        Parameters:
+            None
+        Return:
+            None: The function sets up the UR10 robot within the simulation environment but does not return anything.
+        '''
         ur10 = UR10(prim_path=self.default_zero_env_path + "/ur10", name="UR10")
         self._sim_config.apply_articulation_settings(
             "ur10",
             get_prim_at_path(ur10.prim_path),
             self._sim_config.parse_actor_config("ur10"),
         )
-
-    def get_arm_view(self, scene):
-        arm_view = UR10View(prim_paths_expr="/World/envs/.*/ur10", name="ur10_view")
-        scene.add(arm_view._end_effectors)
-        return arm_view
 
     def get_object_displacement_tensor(self):
         return torch.tensor([0.0, 0.05, 0.0], device=self.device).repeat((self.num_envs, 1))
@@ -150,10 +177,12 @@ class UR10PickAndPlaceTask(PickAndPlaceTask):
         self.real_world_ur10.send_joint_pos(joint_pos)
 
     def turn_on_suction(self):
-        self._arms.set_suction_state(True)
+        for gripper in self.grippers:
+            gripper.suction_on()
 
     def turn_off_suction(self):
-        self._arms.set_suction_state(False)
+        for gripper in self.grippers:
+            gripper.suction_off()
 
     def pre_physics_step(self, actions):
         env_ids = self.reset_buf.nonzero(as_tuple=False).squeeze(-1)
@@ -176,9 +205,9 @@ class UR10PickAndPlaceTask(PickAndPlaceTask):
             self.reset_idx(env_ids)
 
         self.actions = actions.clone().to(self.device)
-        self.actions[:, 5] = 0.0
+        self.actions[:, 4] = 0.0
 
-        gripper_action = actions[:, 6]  # Gripper action
+        gripper_action = actions[:, 5]  # Gripper action
 
         # Apply gripper action to the object
         for idx, action in enumerate(gripper_action):
@@ -186,7 +215,6 @@ class UR10PickAndPlaceTask(PickAndPlaceTask):
                 self.grippers[idx].suction_on()  # Turn on suction
             else:
                 self.grippers[idx].suction_off()
-
 
         if self.use_relative_control:
             targets = self.prev_targets[:, self.actuated_dof_indices] + self.arm_dof_speed_scale * self.dt * self.actions

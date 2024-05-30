@@ -9,15 +9,15 @@ from omni.isaac.core.utils.torch import *
 # `scale` maps [-1, 1] to [L, U]; `unscale` maps [L, U] to [-1, 1]
 from omni.isaac.core.utils.torch import scale, unscale
 from omni.isaac.gym.vec_env import VecEnvBase
-import omni
-from pxr import Sdf, UsdPhysics, PhysxSchema, UsdShade, Gf
+
+from pxr import Sdf, UsdPhysics, UsdShade 
 
 import numpy as np
 import torch
 import random
 
 
-class PickAndPlaceTask(RLTask):
+class PickAndPlace(RLTask):
     """
     Implements a Reacher task for Reinforcement Learning using the Omni Isaac Gym environment.
     This class is designed to manage the environment setup, interaction, and rewards specific to a robotic reaching task.
@@ -53,8 +53,6 @@ class PickAndPlaceTask(RLTask):
         # Performance and success metrics
         self.success_tolerance = self._task_cfg["env"]["successTolerance"]  #Tolerance for success in reaching the goal
         self.reach_goal_bonus = self._task_cfg["env"]["reachGoalBonus"] # Bonus for reaching the goal
-        self.grasp_goal_bonus = self._task_cfg["env"]["graspGoalBonus"] # Bonus for grasping the goal
-        self.place_goal_bonus = self._task_cfg["env"]["placeGoalBonus"] # Bonus for placing the goal
         self.rot_eps = self._task_cfg["env"]["rotEps"]  # Small epsilon value for rotation calculation stability
         self.vel_obs_scale = self._task_cfg["env"]["velObsScale"] # Velocity observation scaling factor
         
@@ -107,7 +105,10 @@ class PickAndPlaceTask(RLTask):
         self.goal_distances = torch.zeros(self._num_envs, dtype=torch.float, device=self.device)
         self.episode_rewards = []
         self.episode_goal_distances = []
-        self.task_state = 'reaching' # Task state: 'reaching', 'grasping', 'transport' or 'placing'
+
+        self.timesteps_since_start = torch.zeros(self._num_envs, dtype=torch.long, device=self.device)  
+        self.success_timesteps = [] 
+        self.accuracy = torch.zeros(self._num_envs, dtype=torch.float, device=self.device)
         return
     
 
@@ -125,7 +126,7 @@ class PickAndPlaceTask(RLTask):
         self.get_arm()
         self.get_object()
         self.get_goal()
-        self.get_place_goal()
+        self.get_place()
 
         super().set_up_scene(scene) # Call to superclass method to complete scene setup
 
@@ -144,6 +145,13 @@ class PickAndPlaceTask(RLTask):
             reset_xform_properties=False,
         )
         scene.add(self._goals)
+
+        self._goal_places = RigidPrimView(
+        prim_paths_expr="/World/envs/env_.*/goal_place/object",
+        name="goal_place_view",
+        reset_xform_properties=False,
+        )
+        scene.add(self._goal_places)
 
     @abstractmethod
     def get_num_dof(self):
@@ -175,8 +183,6 @@ class PickAndPlaceTask(RLTask):
         Abstract method to obtain observations from the environment.
         Must be implemented by subclasses.
         """
-        obs['gripper_open'] = 1.0 if self.gripper.is_open() else 0.0
-        obs['object_held'] = 1.0 if self.gripper.is_holding_object() else 0.0
         pass
 
     @abstractmethod
@@ -235,109 +241,48 @@ class PickAndPlaceTask(RLTask):
             orientation=self.goal_start_orientation,
             scale=self.goal_scale
         )
+        self.goal_scale = torch.tensor([random.uniform(0.5, 4.0), random.uniform(0.5, 4.0), random.uniform(0.5, 4.0)], device=self.device)
+        print(f"Goal scale: {self.goal_scale}")
+
         self._sim_config.apply_articulation_settings("goal", get_prim_at_path(goal.prim_path), self._sim_config.parse_actor_config("goal_object"))
 
-    import random
-
-    def is_holding_object(self):
-        return self._virtual_gripper.is_closed()
-
-    def get_goal(self):
-        # Liste der möglichen Zielobjekte
-        possible_goals = [
-            f"{self._assets_root_path}/Isaac/Props/Blocks/block_instanceable.usd",
-            f"{self._assets_root_path}/Isaac/Props/Blocks/tomato_soup.usd",
-            f"{self._assets_root_path}/Isaac/Props/Blocks/block.usd"
-        ]
-
-        # Zufällige Auswahl eines Zielobjekts
-        self.goal_usd_path = random.choice(possible_goals)
-
-        # Zufällige Größe des Zielobjekts (z.B. zwischen 0.5 und 4.0)
-        self.goal_scale = torch.tensor([random.uniform(0.5, 4.0), random.uniform(0.5, 4.0), random.uniform(0.5, 4.0)], device=self.device)
-
-        # Basisinitialisierungen
+    def get_place(self):
         self.goal_displacement_tensor = torch.tensor([0.0, 0.0, 0.0], device=self.device)
         self.goal_start_translation = torch.tensor([0.0, 0.0, 0.0], device=self.device) + self.goal_displacement_tensor
         self.goal_start_orientation = torch.tensor([1.0, 0.0, 0.0, 0.0], device=self.device)
 
-        # Hinzufügen des Referenzpfades zur Bühne
-        add_reference_to_stage(self.goal_usd_path, self.default_zero_env_path + "/goal")
+        self.goal_usd_path = f"{self._assets_root_path}/Isaac/Props/Blocks/block_instanceable.usd"
+        add_reference_to_stage(self.goal_usd_path, self.default_zero_env_path + "/goal_place")
         goal = XFormPrim(
-            prim_path=self.default_zero_env_path + "/goal/object",
-            name="goal",
+            prim_path=self.default_zero_env_path + "/goal_place/object",
+            name="goal_place",
             translation=self.goal_start_translation,
             orientation=self.goal_start_orientation,
             scale=self.goal_scale
         )
+        self.goal_scale = torch.tensor([random.uniform(0.01, 0.5), random.uniform(0.01, 0.5), random.uniform(0.01, 0.5)], device=self.device)
+        print(f"Place goal scale: {self.goal_scale}")
 
-        # Anwenden der Konfigurationseinstellungen
-        self._sim_config.apply_articulation_settings("goal", get_prim_at_path(goal.prim_path), self._sim_config.parse_actor_config("goal"))
+        self._sim_config.apply_articulation_settings("goal_place", get_prim_at_path(goal.prim_path), self._sim_config.parse_actor_config("goal_place_object"))
 
-        # Hinzufügen des Physikmaterials
-        stage = omni.usd.get_context().get_stage()
-        goal_prim = stage.GetPrimAtPath(self.default_zero_env_path + "/goal/object")
-        if not goal_prim.IsValid():
-            raise RuntimeError(f"Failed to get prim at path: {self.default_zero_env_path + '/goal/object'}")
-        
-        material_api = PhysxSchema.PhysxMaterialAPI.Apply(goal_prim)
-        if not material_api:
-            raise RuntimeError("Failed to apply PhysxMaterialAPI to the goal prim.")
-        
-        material_api.CreateFrictionCombineModeAttr(PhysxSchema.Tokens.min)
-
-        # Erstellen und Anwenden des Metallmaterials
-        material_path = Sdf.Path(self.default_zero_env_path + "/goal/object/metal_material")
-        material = UsdShade.Material.Define(stage, material_path)
-        
-        shader = UsdShade.Shader.Define(stage, material_path.AppendPath("Shader"))
-        shader.CreateIdAttr("UsdPreviewSurface")
-
-        shader.CreateInput("metallic", Sdf.ValueTypeNames.Float).Set(1.0)
-        shader.CreateInput("roughness", Sdf.ValueTypeNames.Float).Set(0.2)
-        shader.CreateInput("diffuseColor", Sdf.ValueTypeNames.Color3f).Set(Gf.Vec3f(0.5, 0.5, 0.5))
-
-        material.CreateSurfaceOutput().ConnectToSource(shader.ConnectableAPI(), "surface")
-
-        UsdShade.MaterialBindingAPI(goal_prim).Bind(material)
-
-        
-    def get_place_goal(self):
+    def calculate_accuracy(self, env_ids):
         """
-        Retrieves or sets up the placement goal for the object in the environment.
+        Calculate the accuracy of the placement by measuring the distance between the object's center and the goal's center.
+        Args:
+            env_ids: IDs of environments to calculate accuracy for.
         """
-        # Liste der möglichen Ablageziele
-        possible_placement_goals = [
-            f"{self._assets_root_path}/Isaac/Props/Blocks/block_instanceable.usd",
-            f"{self._assets_root_path}/Isaac/Props/Blocks/tomato_soup.usd",
-            f"{self._assets_root_path}/Isaac/Props/Blocks/block.usd"
-        ]
+        object_centers = self._objects.get_world_poses()[0][env_ids]  # Get object positions for the specified environments
+        goal_place_centers = self._goal_places.get_world_poses()[0][env_ids]  # Get goal_place positions for the specified environments
 
-        # Zufällige Auswahl eines Ablageziels
-        self.place_goal_usd_path = random.choice(possible_placement_goals)
-
-        # Zufällige Größe des Ablageziels (z.B. zwischen 0.5 und 2.0, je nach Objekttyp)
-        self.place_goal_scale = torch.tensor([random.uniform(2.5, 10.0), random.uniform(2.5, 10.0), random.uniform(2.5, 10.0)], device=self.device)
-
-        # Basisinitialisierungen für die Positionierung des Ziels
-        self.place_goal_displacement_tensor = torch.tensor([0.1, 0.1, 0.0], device=self.device)  # Leichte Verschiebung zur Zentralisierung
-        self.place_goal_start_translation = torch.tensor([0.8, 0.8, 0.0], device=self.device) + self.place_goal_displacement_tensor
-        self.place_goal_start_orientation = torch.tensor([1.2, 0.0, 0.0, 0.0], device=self.device)  # Standardorientierung
-
-        # Hinzufügen des Referenzpfades zur Bühne
-        add_reference_to_stage(self.place_goal_usd_path, self.default_zero_env_path + "/place_goal")
-        place_goal = XFormPrim(
-            prim_path=self.default_zero_env_path + "/place_goal/object",
-            name="place_goal_object",
-            translation=self.place_goal_start_translation,
-            orientation=self.place_goal_start_orientation,
-            scale=self.place_goal_scale
-        )
-
-        # Anwenden der Konfigurationseinstellungen
-        self._sim_config.apply_articulation_settings("place_goal_object", get_prim_at_path(place_goal.prim_path), self._sim_config.parse_actor_config("place_goal_object"))
-
+        # Calculate the Euclidean distance between the object centers and the goal_place centers
+        distances = torch.norm(object_centers - goal_place_centers, p=2, dim=-1)
     
+        # Convert distances to millimeters (assuming the distances are in meters)
+        distances_mm = distances * 1000
+
+
+        return distances_mm
+        
     def post_reset(self):
         """
         Actions to perform after environment reset, including setting initial poses and calculating new targets.
@@ -367,49 +312,6 @@ class PickAndPlaceTask(RLTask):
         indices = torch.arange(self._num_envs, dtype=torch.int64, device=self._device)
         self.reset_idx(indices)
 
-    # def calculate_metrics(self):
-    #     """
-    #     Calculate and update metrics after each step, including rewards and success tracking.
-    #     """
-    #     self.fall_dist = 0  # Distance fallen, used for calculating fall penalty
-    #     self.fall_penalty = 0  # Penalty for falling, if applicable
-
-    #     # Compute rewards and update buffers and success counts
-    #     rewards, resets, goal_resets, progress, successes, cons_successes = compute_arm_reward(
-    #         self.rew_buf, self.reset_buf, self.reset_goal_buf, self.progress_buf, self.successes,
-    #         self.consecutive_successes, self.max_episode_length, self.object_pos, self.object_rot,
-    #         self.goal_pos, self.goal_rot, self.dist_reward_scale, self.rot_reward_scale, self.rot_eps,
-    #         self.actions, self.action_penalty_scale, self.success_tolerance, self.reach_goal_bonus,
-    #         self.fall_dist, self.fall_penalty, self.max_consecutive_successes, self.av_factor
-    #     )
-
-    #     # Update the accumulated rewards and steps
-    #     self.episode_rewards += rewards
-    #     self.episode_lengths += 1
-
-    #     # Handle resets: calculate average rewards and reset counters
-    #     resets_indices = torch.nonzero(resets).squeeze(-1)
-    #     if len(resets_indices) > 0:
-    #         self.print_episode_stats(resets_indices)
-    #         self.episode_rewards[resets_indices] = 0
-    #         self.episode_lengths[resets_indices] = 0
-
-    #     # Update buffers
-    #     self.rew_buf, self.reset_buf, self.reset_goal_buf, self.progress_buf, self.successes, self.consecutive_successes = rewards, resets, goal_resets, progress, successes, cons_successes
-
-    #     # Update extras with average consecutive successes
-    #     self.extras['consecutive_successes'] = cons_successes.mean()
-
-    #     # Print success statistics if enabled
-    #     if self.print_success_stat:
-    #         self.total_resets += resets.sum()
-    #         direct_average_successes = successes.sum()
-    #         self.total_successes += (successes * resets).sum()
-    #         # The direct average shows the overall result more quickly, but slightly undershoots long term policy performance.
-    #         if self.total_resets > 0:
-    #             print("Direct average consecutive successes = {:.1f}".format(direct_average_successes / self.total_resets))
-    #             print("Post-Reset average consecutive successes = {:.1f}".format(self.total_successes / self.total_resets))
-
     def calculate_metrics(self):
         """
         Calculate and update metrics after each step, including rewards and success tracking.
@@ -423,8 +325,7 @@ class PickAndPlaceTask(RLTask):
             self.consecutive_successes, self.max_episode_length, self.object_pos, self.object_rot,
             self.goal_pos, self.goal_rot, self.dist_reward_scale, self.rot_reward_scale, self.rot_eps,
             self.actions, self.action_penalty_scale, self.success_tolerance, self.reach_goal_bonus,
-            self.fall_dist, self.fall_penalty, self.max_consecutive_successes, self.av_factor,
-            self.gripper.is_holding_object(), self.is_object_placed_correctly(), self.grasp_goal_bonus, self.place_goal_bonus
+            self.fall_dist, self.fall_penalty, self.max_consecutive_successes, self.av_factor
         )
 
         # Update the accumulated rewards and steps
@@ -450,11 +351,31 @@ class PickAndPlaceTask(RLTask):
                 #self.extras[f'Average Goal Distance environment{idx}'] = avg_dist.item()
 
                 self.episode_count += 1
+            
+            # Calculate and log accuracy for successful episodes
+            success_indices = resets_indices[successes[resets_indices] > 0]
+            if len(success_indices) > 0:
+                accuracy_mm = self.calculate_accuracy(success_indices)
+                min_accuracy = torch.min(accuracy_mm).item()
+                max_accuracy = torch.max(accuracy_mm).item()
+                self.extras['min_accuracy_mm'] = min_accuracy  
+                self.extras['max_accuracy_mm'] = max_accuracy
+
+                print(f'Episode {self.episode_count}: Min Accuracy: {min_accuracy} mm')
+
 
             # Reset the cumulative counters for the next episode
             self.cumulative_rewards[resets_indices] = 0
             self.goal_distances[resets_indices] = 0
             self.episode_lengths[resets_indices] = 0
+
+            # Log the timesteps for successful episodes
+            for idx in resets_indices:
+                if self.successes[idx] > 0:
+                    self.success_timesteps.append(self.timesteps_since_start[idx].item())
+                    min_timesteps = torch.min(torch.tensor(self.success_timesteps))
+                    self.extras[f'timesteps_to_success'] = min_timesteps
+                    self.timesteps_since_start[idx] = 0 
 
         # Update buffers
         self.rew_buf, self.reset_buf, self.reset_goal_buf, self.progress_buf, self.successes, self.consecutive_successes = rewards, resets, goal_resets, progress, successes, cons_successes
@@ -486,8 +407,19 @@ class PickAndPlaceTask(RLTask):
         # Define the desired offset from the end effector
         desired_offset = torch.tensor([0.1585, 0.0, 0.0], device=self.device)  # example offset of 0.1 meters in x-direction
         return desired_offset
-    
-    def reach_goal(self):
+
+
+    def pre_physics_step(self, actions):
+        """
+        Actions to perform before each physics simulation step, including resetting targets and applying actions.
+        
+        Args:
+            actions: The actions to apply to the environment.
+        """
+        env_ids = self.reset_buf.nonzero(as_tuple=False).squeeze(-1)  # IDs of environments needing reset
+        goal_env_ids = self.reset_goal_buf.nonzero(as_tuple=False).squeeze(-1) # IDs of environments where goals need resetting
+
+        # Retrieve current positions and orientations for end effectors
         end_effectors_pos, end_effectors_rot = self._arms._end_effectors.get_world_poses()
         
         #self.pick_box(env_ids)
@@ -511,13 +443,14 @@ class PickAndPlaceTask(RLTask):
             self.reset_idx(env_ids)
 
         self.actions = actions.clone().to(self.device) # Clone actions to device
-        self.actions[:, 6] = 0.0
- 
+        # Reacher tasks don't require gripper actions, disable it.
+        self.actions[:, 5] = 0.0
+
         if self.use_relative_control:
             # Calculate new target positions for joints based on actions and speed scale
             targets = self.prev_targets[:, self.actuated_dof_indices] + self.arm_dof_speed_scale * self.dt * self.actions
             self.cur_targets[:, self.actuated_dof_indices] = tensor_clamp(targets,
-            self.arm_dof_lower_limits[self.actuated_dof_indices], self.arm_dof_upper_limits[self.actuated_dof_indices])
+                self.arm_dof_lower_limits[self.actuated_dof_indices], self.arm_dof_upper_limits[self.actuated_dof_indices])
         else:
             # Scale and apply moving average to actions to calculate new targets
             self.cur_targets[:, self.actuated_dof_indices] = scale(self.actions,
@@ -537,102 +470,15 @@ class PickAndPlaceTask(RLTask):
             # Only retrieve the 0-th joint position even when multiple envs are used
             # Retrieve current joint positions and send them to the real robot if sim2real is enabled and in test mode
             cur_joint_pos = self._arms.get_joint_positions(indices=[0], joint_indices=self.actuated_dof_indices)
-        # Send the current joint positions to the real robot
-        # Check for joint position bounds and skip sending if out of bounds
+            # Send the current joint positions to the real robot
+            # Check for joint position bounds and skip sending if out of bounds
             joint_pos = cur_joint_pos[0]
             if torch.any(joint_pos < self.arm_dof_lower_limits) or torch.any(joint_pos > self.arm_dof_upper_limits):
                 print("get_joint_positions out of bound, send_joint_pos skipped")
             else:
                 self.send_joint_pos(joint_pos)
+        self.timesteps_since_start += 1
 
-    def transport_goal(self):
-        end_effectors_pos, end_effectors_rot = self._arms._end_effectors.get_world_poses()
-
-        # Aktualisierung der Objektposition und -rotation basierend auf den Zuständen der Endeffektoren
-        self.object_pos = end_effectors_pos + quat_rotate(end_effectors_rot, quat_rotate_inverse(self.end_effectors_init_rot, self.get_object_displacement_tensor()))
-        self.object_pos -= self._env_pos  # Anpassung der Objektposition relativ zur Umgebungsposition
-        self.object_rot = end_effectors_rot
-        object_pos = self.object_pos + self._env_pos
-        object_rot = self.object_rot
-        self._objects.set_world_poses(object_pos, object_rot)
-
-        # place goal
-        # goal_place_pos, goal_place_rot 
-        place_goal_pos, place_goal_rot = self._place_goals.get_world_poses()
-        place_goal_pos -= self._env_pos 
-
-        # Setzt das Ziel auf das Ablageziel
-        self.goal_pos = place_goal_pos
-        self.goal_rot = place_goal_rot
-        goal_pos = self.goal_pos + self._env_pos  # Anpassung der Zielposition für Weltkoordinaten
-        self._goals.set_world_poses(goal_pos, self.goal_rot, self._env_ids)  # Aktualisierung der Weltzustände für Ziele
-
-        # Falls nur Ziele zurückgesetzt werden müssen, dann setze API
-        if len(goal_env_ids) > 0 and len(env_ids) == 0:
-            self.reset_target_pose(goal_env_ids)
-        elif len(goal_env_ids) > 0:
-            self.reset_target_pose(goal_env_ids)
-        if len(env_ids) > 0:
-            self.reset_idx(env_ids)
-
-        # Klonen der Aktionen zum Gerät
-        self.actions = actions.clone().to(self.device)
-        self.actions[:, 6] = 0.0  # Annahme, dass Index 6 spezielle Steueraktionen darstellt
-
-        # Neue Zielpositionen für Gelenke berechnen basierend auf Aktionen und Geschwindigkeitsskalierung
-        if self.use_relative_control:
-            targets = self.prev_targets[:, self.actuated_dof_indices] + self.arm_dof_speed_scale * self.dt * self.actions
-            self.cur_targets[:, self.actuated_dof_indices] = tensor_clamp(targets, self.arm_dof_lower_limits[self.actuated_dof_indices], self.arm_dof_upper_limits[self.actuated_dof_indices])
-        else:
-            # Skalieren und Anwenden eines gleitenden Durchschnitts auf Aktionen, um neue Ziele zu berechnen
-            self.cur_targets[:, self.actuated_dof_indices] = scale(self.actions,
-                self.arm_dof_lower_limits[self.actuated_dof_indices], self.arm_dof_upper_limits[self.actuated_dof_indices])
-            self.cur_targets[:, self.actuated_dof_indices] = self.act_moving_average * self.cur_targets[:, self.actuated_dof_indices] + \
-                (1.0 - self.act_moving_average) * self.prev_targets[:, self.actuated_dof_indices]
-            self.cur_targets[:, self.actuated_dof_indices] = tensor_clamp(self.cur_targets[:, self.actuated_dof_indices],
-                self.arm_dof_lower_limits[self.actuated_dof_indices], self.arm_dof_upper_limits[self.actuated_dof_indices])
-
-        self.prev_targets[:, self.actuated_dof_indices] = self.cur_targets[:, self.actuated_dof_indices]  # Aktualisierung der vorherigen Ziele
-
-        # Anwendung der neuen Gelenkpositionsziele auf den Roboterarm
-        self._arms.set_joint_position_targets(
-            self.cur_targets[:, self.actuated_dof_indices], indices=None, joint_indices=self.actuated_dof_indices
-        )
-
-
-
-    def pre_physics_step(self, actions):
-        """
-        Actions to perform before each physics simulation step, including resetting targets and applying actions.
-        
-        Args:
-            actions: The actions to apply to the environment.
-        """
-        env_ids = self.reset_buf.nonzero(as_tuple=False).squeeze(-1)  # IDs of environments needing reset
-        goal_env_ids = self.reset_goal_buf.nonzero(as_tuple=False).squeeze(-1) # IDs of environments where goals need resetting
-
-        if self.task_state == 'reaching':
-            # Retrieve current positions and orientations for end effectors
-            self.reach_goal()
-            
-        elif self.task_state == 'grasping':
-            # Retrieve current positions and orientations for end effectors
-            end_effectors_pos, end_effectors_rot = self._arms._end_effectors.get_world_poses()
-        
-            #self.pick_box(env_ids)
-        
-            # Reverse the default rotation and rotate the displacement tensor according to the current rotation
-            # Update object position and orientation based on end effector states
-            self.object_pos = end_effectors_pos + quat_rotate(end_effectors_rot, quat_rotate_inverse(self.end_effectors_init_rot, self.get_object_displacement_tensor()))
-            self.object_pos -= self._env_pos
-            self.object_rot = end_effectors_rot
-            object_pos = self.object_pos + self._env_pos
-            object_rot = self.object_rot
-            self._objects.set_world_poses(object_pos, object_rot)
-        elif self.task_state == 'transport':
-            self.transport_goal()
-        elif self.task_state == 'placing':
-            self.place_goal()
 
     def is_done(self):
         """
@@ -705,6 +551,9 @@ class PickAndPlaceTask(RLTask):
         self.cumulative_rewards[env_ids] = 0
         self.goal_distances[env_ids] = 0
 
+        self.timesteps_since_start[env_ids] = 0  # Reset timesteps counter for reset environments
+        self.accuracy[env_ids] = 0
+
 
 #####################################################################
 ###=========================jit functions=========================###
@@ -734,8 +583,7 @@ def compute_arm_reward(
     dist_reward_scale: float, rot_reward_scale: float, rot_eps: float,
     actions, action_penalty_scale: float,
     success_tolerance: float, reach_goal_bonus: float, fall_dist: float,
-    fall_penalty: float, max_consecutive_successes: int, av_factor: float, 
-    is_object_held: bool, object_placed_correctly: bool, grasp_goal_bonus: float, place_goal_bonus: float
+    fall_penalty: float, max_consecutive_successes: int, av_factor: float
 ):
     """
     Computes rewards for the Reacher task based on distances, orientations, actions, and success conditions.
@@ -787,12 +635,6 @@ def compute_arm_reward(
     # Calculate total reward combining all components
     # Total reward is: position distance + orientation alignment + action regularization + success bonus + fall penalty
     reward = dist_rew + action_penalty * action_penalty_scale
-
-    if self.gripper.is_holding_object():
-        reward += self.grasp_goal_bonus
-    if self.is_object_placed_correctly():
-        reward += self.place_goal_bonus
-
 
     # Check and update success conditions based on tolerance thresholds
     # Find out which envs hit the goal and update successes count

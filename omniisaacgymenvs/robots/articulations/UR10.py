@@ -1,33 +1,3 @@
-# Copyright (c) 2018-2022, NVIDIA Corporation
-# Copyright (c) 2022-2023, Johnson Sun
-# All rights reserved.
-#
-# Redistribution and use in source and binary forms, with or without
-# modification, are permitted provided that the following conditions are met:
-#
-# 1. Redistributions of source code must retain the above copyright notice, this
-#    list of conditions and the following disclaimer.
-#
-# 2. Redistributions in binary form must reproduce the above copyright notice,
-#    this list of conditions and the following disclaimer in the documentation
-#    and/or other materials provided with the distribution.
-#
-# 3. Neither the name of the copyright holder nor the names of its
-#    contributors may be used to endorse or promote products derived from
-#    this software without specific prior written permission.
-#
-# THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
-# AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
-# IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
-# DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE
-# FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
-# DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR
-# SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
-# CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
-# OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
-# OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
-
-
 from typing import Optional
 import torch
 from omni.isaac.core.robots.robot import Robot
@@ -61,6 +31,7 @@ class UR10(Robot):
         usd_path: Optional[str] = None,
         translation: Optional[torch.tensor] = None,
         orientation: Optional[torch.tensor] = None,
+        attach_gripper: Optional[bool] = True,
     ) -> None:
         """
         Initializes a new instance of the UR10 robot with the specified parameters and adds it to the simulation stage.
@@ -74,6 +45,7 @@ class UR10(Robot):
         """
 
         self._usd_path = usd_path
+        self.assets_root_path = get_assets_root_path()
         self._name = name
 
         if self._usd_path is None:
@@ -81,10 +53,11 @@ class UR10(Robot):
             if assets_root_path is None:
                 carb.log_error("Could not find Isaac Sim assets folder")
             #self._usd_path = "omniverse://localhost/Projects/J3soon/Isaac/2023.1.1/Isaac/Robots/UR10/ur10_long_suction.usd"
-            self._usd_path = "omniverse://localhost/Projects/J3soon/Isaac/2023.1.1/Isaac/Robots/UR10/ur10_short_suction.usd"
+            #self._usd_path = "omniverse://localhost/Projects/J3soon/Isaac/2023.1.1/Isaac/Robots/UR10/ur10_short_suction.usd"
+            #self._usd_path = (self.assets_root_path + "omniverse://localhost/Projects/J3soon/Isaac/2023.1.1/Isaac/Robots/ur10_bin_stacking_short_suction.usd")
             #self._usd_path = "omniverse://localhost/Projects/J3soon/Isaac/2023.1.1/Isaac/Robots/UR10/ur10_with_hand_e.usd"
             #self._usd_path = 'omniverse://localhost/Projects/J3soon/Isaac/2023.1.1/Isaac/Robots/UR10/ur10_with_2f_140_gripper.usd'
-            #self._usd_path = 'omniverse://localhost/Projects/J3soon/Isaac/2023.1.1/Isaac/Robots/UR10/ur10_instanceable.usd'
+            self._usd_path = 'omniverse://localhost/Projects/J3soon/Isaac/2023.1.1/Isaac/Robots/UR10/ur10_instanceable.usd'
             #self._usd_path = 'omniverse://localhost/Projects/J3soon/Isaac/2023.1.1/Isaac/Robots/UR10/ur10_gripper_140_instanceable.usd'
 
 
@@ -94,6 +67,9 @@ class UR10(Robot):
 
         add_reference_to_stage(self._usd_path, prim_path)
 
+        if attach_gripper:
+            self.attach_gripper()
+
         super().__init__(
             prim_path=prim_path,
             name=name,
@@ -101,3 +77,12 @@ class UR10(Robot):
             orientation=self._orientation,
             articulation_controller=None,
         )
+
+    def attach_gripper(self):
+        """
+        Attaches a gripper to the UR10 robot instance.
+        """
+        gripper_usd_path = "omniverse://localhost/Projects/J3soon/Isaac/2023.1.1/Isaac/Robots/UR10/Props/short_gripper.usd"
+        gripper_prim_path = f"{self.prim_path}/short_gripper"
+        add_reference_to_stage(gripper_usd_path, gripper_prim_path)
+
