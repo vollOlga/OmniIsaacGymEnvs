@@ -2,19 +2,19 @@ from omniisaacgymenvs.utils.config_utils.sim_config import SimConfig
 from omniisaacgymenvs.tasks.shared.pick_and_place import PickAndPlace
 from omniisaacgymenvs.robots.articulations.views.UR10_view import UR10View
 from omniisaacgymenvs.robots.articulations.ur10 import UR10
-#from omni.isaac.core.utils.prims import get_prim_at_path, add_reference_to_stage
 from omni.isaac.core.utils.stage import add_reference_to_stage
-from omni.isaac.cortex.cortex_rigid_prim import CortexRigidPrim
-from omni.isaac.cortex.cortex_utils import get_assets_root_path
 from omni.isaac.core.utils.torch import *
 from omni.isaac.gym.vec_env import VecEnvBase
 from omni.isaac.core.prims.xform_prim import XFormPrim
 from omni.isaac.core.visual_sphere import VisualSphere
 from omni.isaac.core.visual_capsule import VisualCapsule
-from omni.isaac.cortex.robot import CortexUr10
+from omni.isaac.core.materials import OmniGlass
+from omni.isaac.surface_gripper import SurfaceGripper
+from omni.isaac.core.utils.types import ArticulationAction
 import numpy as np
 import torch
 import math
+
 
 class Ur10Assets:
     """
@@ -26,111 +26,54 @@ class Ur10Assets:
         Initializes the asset paths.
         """
         self.assets_root_path = get_assets_root_path()
+        self.ur10_table_usd = self.assets_root_path + "/Isaac/Samples/Leonardo/Stage/ur10_bin_stacking_short_suction.usd"
 
-        self.ur10_table_usd = (
-                self.assets_root_path + "/Isaac/Samples/Leonardo/Stage/ur10_bin_stacking_short_suction.usd"
-        )
-        self.small_klt_usd = self.assets_root_path + "/Isaac/Props/KLT_Bin/small_KLT.usd"
-        self.background_usd = self.assets_root_path + "/Isaac/Environments/Simple_Warehouse/warehouse.usd"
-        self.rubiks_cube_usd = self.assets_root_path + "/Isaac/Props/Rubiks_Cube/rubiks_cube.usd"
-
-    def setup_scene(self):
+    def setup_scene(self, world):
         """
         Sets up the simulation scene, including the robot, environment, and obstacles.
         """
-        world = self.get_world()
         env_path = "/World/Ur10Table"
-        ur10_assets = Ur10Assets()
-        add_reference_to_stage(usd_path=ur10_assets.ur10_table_usd, prim_path=env_path)
-        add_reference_to_stage(usd_path=ur10_assets.background_usd, prim_path="/World/Background")
-        background_prim = XFormPrim(
-            "/World/Background", position=[10.00, 2.00, -1.18180], orientation=[0.7071, 0, 0, 0.7071]
-        )
-        self.robot = world.add_robot(CortexUr10(name="robot", prim_path="{}/ur10".format(env_path)))
+        add_reference_to_stage(usd_path=self.ur10_table_usd, prim_path=env_path)
+        add_reference_to_stage(usd_path=self.assets_root_path + "/Isaac/Environments/Simple_Warehouse/warehouse.usd",
+                               prim_path="/World/Background")
+        XFormPrim("/World/Background", position=[10.00, 2.00, -1.18180], orientation=[0.7071, 0, 0, 0.7071])
+        self.create_ur10(world, env_path)
 
-        obs = world.scene.add(
-            VisualSphere(
-                "/World/Ur10Table/Obstacles/FlipStationSphere",
-                name="flip_station_sphere",
-                position=np.array([0.73, 0.76, -0.13]),
-                radius=0.2,
-                visible=False,
-            )
-        )
-        self.robot.register_obstacle(obs)
-        obs = world.scene.add(
-            VisualSphere(
-                "/World/Ur10Table/Obstacles/NavigationDome",
-                name="navigation_dome_obs",
-                position=[-0.031, -0.018, -1.086],
-                radius=1.1,
-                visible=False,
-            )
-        )
-        self.robot.register_obstacle(obs)
-
-        az = np.array([1.0, 0.0, -0.3])
-        ax = np.array([0.0, 1.0, 0.0])
-        ay = np.cross(az, ax)
-        R = math_util.pack_R(ax, ay, az)
-        quat = math_util.matrix_to_quat(R)
-        obs = world.scene.add(
-            VisualCapsule(
-                "/World/Ur10Table/Obstacles/NavigationBarrier",
-                name="navigation_barrier_obs",
-                position=[0.471, 0.276, -0.463 - 0.1],
-                orientation=quat,
-                radius=0.5,
-                height=0.9,
-                visible=False,
-            )
-        )
-        self.robot.register_obstacle(obs)
-
-        obs = world.scene.add(
-            VisualCapsule(
-                "/World/Ur10Table/Obstacles/NavigationFlipStation",
-                name="navigation_flip_station_obs",
-                position=np.array([0.766, 0.755, -0.5]),
-                radius=0.5,
-                height=0.5,
-                visible=False,
-            )
-        )
-        self.robot.register_obstacle(obs)
-
-    async def setup_post_load(self):
+    def create_ur10(self, world, env_path):
         """
-        Performs additional setup tasks after the simulation world has been loaded.
-
-        Returns:
-            None
+        Creates the UR10 robot in the simulation world.
         """
-        world = self.get_world()
-        env_path = "/World/Ur10Table"
-        ur10_assets = Ur10Assets()
-        if not self.robot:
-            self.robot = world._robots["robot"]
-            world._current_tasks.clear()
-            world._behaviors.clear()
-            world._logical_state_monitors.clear()
-        self.task = BinStackingTask(env_path, ur10_assets)
-        print(world.scene)
-        self.task.set_up_scene(world.scene)
-        world.add_task(self.task)
-        self.decider_network = behavior.make_decider_network(self.robot, self._on_monitor_update)
-        world.add_decider_network(self.decider_network)
-        return
+        ur10 = UR10WithGripperAssets(
+            prim_path=f"{env_path}/ur10",
+            name="UR10",
+            position=np.array([0, 0, 51.5]),
+            attach_gripper=True
+        )
+        world.scene.add(ur10)
+
+
+class UR10WithGripperAssets(UR10):
+    """
+    Class to manage UR10 with a gripper.
+    """
+
+    def __init__(self, prim_path, name, position, attach_gripper=True):
+        super().__init__(prim_path, name, position)
+        self.assets_root_path = get_assets_root_path()
+        self._usd_path = self.assets_root_path + "/Isaac/Robots/UR10/ur10_short_suction.usd"
+        if attach_gripper:
+            self.attach_gripper()
+
+    def attach_gripper(self):
+        """
+        Attaches a gripper to the UR10 robot.
+        """
+        gripper = SurfaceGripper("/World/envs/.*/ur10/ee_link")
+        self.end_effector_prim = gripper
 
 
 class UR10PickAndPlaceTask(PickAndPlace):
-    def __init__(
-            self,
-            name: str,
-            sim_config: SimConfig,
-            env: VecEnvBase,
-            offset=None
-    ) -> None:
+    def __init__(self, name: str, sim_config: SimConfig, env: VecEnvBase, offset=None) -> None:
         '''
         Initializes the UR10PickAndPlaceTask instance with the necessary configuration.
 
@@ -189,12 +132,12 @@ class UR10PickAndPlaceTask(PickAndPlace):
             ]], dtype=torch.float32, device=self._cfg["sim_device"])
         else:
             self._dof_limits = torch.tensor([[
-                [-2 * pi, 2 * pi],  # [-2*pi, 2*pi],
-                [-pi + pi / 8, 0 - pi / 8],  # [-2*pi, 2*pi],
-                [-pi + pi / 8, pi - pi / 8],  # [-2*pi, 2*pi],
-                [-pi, 0],  # [-2*pi, 2*pi],
-                [-pi, pi],  # [-2*pi, 2*pi],
-                [-2 * pi, 2 * pi],  # [-2*pi, 2*pi],
+                [-2 * pi, 2 * pi],
+                [-pi + pi / 8, 0 - pi / 8],
+                [-pi + pi / 8, pi - pi / 8],
+                [-pi, 0],
+                [-pi, pi],
+                [-2 * pi, 2 * pi],
                 [-1, 1],  # Gripper action range
             ]], dtype=torch.float32, device=self._cfg["sim_device"])
 
@@ -234,7 +177,7 @@ class UR10PickAndPlaceTask(PickAndPlace):
             None: The function sets up the UR10 robot within the simulation environment but does not return anything.
         '''
         ur10_assets = Ur10Assets()
-        ur10_assets.setup_scene()
+        ur10_assets.setup_scene(self._sim_config.get_world())
 
     def get_arm_view(self, scene):
         '''
