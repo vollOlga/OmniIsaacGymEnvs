@@ -2,13 +2,16 @@ from omniisaacgymenvs.utils.config_utils.sim_config import SimConfig
 from omniisaacgymenvs.tasks.shared.pick_and_place import PickAndPlace
 from omniisaacgymenvs.robots.articulations.views.UR10_view import UR10View
 from omniisaacgymenvs.robots.articulations.ur10 import UR10
-from omni.isaac.core.utils.prims import get_prim_at_path, add_reference_to_stage
+#from omni.isaac.core.utils.prims import get_prim_at_path, add_reference_to_stage
+from omni.isaac.core.utils.stage import add_reference_to_stage
+from omni.isaac.cortex.cortex_rigid_prim import CortexRigidPrim
+from omni.isaac.cortex.cortex_utils import get_assets_root_path
 from omni.isaac.core.utils.torch import *
 from omni.isaac.gym.vec_env import VecEnvBase
 from omni.isaac.core.prims.xform_prim import XFormPrim
 from omni.isaac.core.visual_sphere import VisualSphere
 from omni.isaac.core.visual_capsule import VisualCapsule
-from omni.isaac.cortex.robots import CortexUr10
+from omni.isaac.cortex.robot import CortexUr10
 import numpy as np
 import torch
 import math
