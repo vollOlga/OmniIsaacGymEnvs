@@ -1,75 +1,16 @@
+from omniisaacgymenvs.sim2real.ur10 import RealWorldUR10
 from omniisaacgymenvs.utils.config_utils.sim_config import SimConfig
-from omniisaacgymenvs.tasks.shared.pick_and_place import PickAndPlace
-from omniisaacgymenvs.robots.articulations.views.UR10_view import UR10View
+from omniisaacgymenvs.tasks.shared.reacher import ReacherTask
+from omniisaacgymenvs.robots.articulations.views.ur10_view import UR10View
 from omniisaacgymenvs.robots.articulations.ur10 import UR10
-from omni.isaac.core.utils.stage import add_reference_to_stage
+
+from omni.isaac.core.utils.prims import get_prim_at_path
 from omni.isaac.core.utils.torch import *
 from omni.isaac.gym.vec_env import VecEnvBase
-from omni.isaac.core.prims.xform_prim import XFormPrim
-from omni.isaac.core.visual_sphere import VisualSphere
-from omni.isaac.core.visual_capsule import VisualCapsule
-from omni.isaac.core.materials import OmniGlass
-from omni.isaac.surface_gripper import SurfaceGripper
-from omni.isaac.core.utils.types import ArticulationAction
+
 import numpy as np
 import torch
 import math
-
-
-class Ur10Assets:
-    """
-    Class for managing the asset paths for the UR10 robot simulation.
-    """
-
-    def __init__(self):
-        """
-        Initializes the asset paths.
-        """
-        self.assets_root_path = get_assets_root_path()
-        self.ur10_table_usd = self.assets_root_path + "/Isaac/Samples/Leonardo/Stage/ur10_bin_stacking_short_suction.usd"
-
-    def setup_scene(self, world):
-        """
-        Sets up the simulation scene, including the robot, environment, and obstacles.
-        """
-        env_path = "/World/Ur10Table"
-        add_reference_to_stage(usd_path=self.ur10_table_usd, prim_path=env_path)
-        add_reference_to_stage(usd_path=self.assets_root_path + "/Isaac/Environments/Simple_Warehouse/warehouse.usd",
-                               prim_path="/World/Background")
-        XFormPrim("/World/Background", position=[10.00, 2.00, -1.18180], orientation=[0.7071, 0, 0, 0.7071])
-        self.create_ur10(world, env_path)
-
-    def create_ur10(self, world, env_path):
-        """
-        Creates the UR10 robot in the simulation world.
-        """
-        ur10 = UR10WithGripperAssets(
-            prim_path=f"{env_path}/ur10",
-            name="UR10",
-            position=np.array([0, 0, 51.5]),
-            attach_gripper=True
-        )
-        world.scene.add(ur10)
-
-
-class UR10WithGripperAssets(UR10):
-    """
-    Class to manage UR10 with a gripper.
-    """
-
-    def __init__(self, prim_path, name, position, attach_gripper=True):
-        super().__init__(prim_path, name, position)
-        self.assets_root_path = get_assets_root_path()
-        self._usd_path = self.assets_root_path + "/Isaac/Robots/UR10/ur10_short_suction.usd"
-        if attach_gripper:
-            self.attach_gripper()
-
-    def attach_gripper(self):
-        """
-        Attaches a gripper to the UR10 robot.
-        """
-        gripper = SurfaceGripper("/World/envs/.*/ur10/ee_link")
-        self.end_effector_prim = gripper
 
 
 class UR10PickAndPlaceTask(PickAndPlace):
@@ -176,8 +117,12 @@ class UR10PickAndPlaceTask(PickAndPlace):
         Return:
             None: The function sets up the UR10 robot within the simulation environment but does not return anything.
         '''
-        ur10_assets = Ur10Assets()
-        ur10_assets.setup_scene(self._sim_config.get_world())
+        ur10 = UR10(prim_path=self.default_zero_env_path + "/ur10", name="UR10")
+        self._sim_config.apply_articulation_settings(
+            "ur10",
+            get_prim_at_path(ur10.prim_path),
+            self._sim_config.parse_actor_config("ur10"),
+        )
 
     def get_arm_view(self, scene):
         '''
@@ -189,7 +134,7 @@ class UR10PickAndPlaceTask(PickAndPlace):
         Return:
             UR10View: An instance of UR10View that provides an interface to visualize or interact with the robot's configuration.
         '''
-        arm_view = UR10View(prim_paths_expr="/World/Ur10Table/ur10", name="ur10_view")
+        arm_view = UR10View(prim_paths_expr="/World/envs/.*/ur10", name="ur10_view")
         scene.add(arm_view._end_effectors)
         return arm_view
 
