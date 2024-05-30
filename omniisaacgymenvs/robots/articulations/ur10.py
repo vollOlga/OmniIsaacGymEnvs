@@ -1,37 +1,47 @@
-from omni.isaac.universal_robots.ur10 import UR10
-from omni.isaac.core.utils.types import ArticulationAction
-from omni.isaac.core.materials import OmniGlass
-from omni.isaac.surface_gripper import SurfaceGripper
-class UR10WithGripperAssets(UR10):
-    def __init__(self,
-                prim_path,
-                name,
-                position, 
-                attach_gripper=True):
-        super().__init__(prim_path, name, position)
-        #self._usd_path = usd_path
-        self.assets_root_path = get_assets_root_path()
+from typing import Optional
+import torch
+from omni.isaac.core.robots.robot import Robot
+from omni.isaac.core.utils.nucleus import get_assets_root_path
+from omni.isaac.core.utils.stage import add_reference_to_stage
+
+import carb
+
+class UR10(Robot):
+    def __init__(
+        self,
+        prim_path: str,
+        name: Optional[str] = "UR10",
+        usd_path: Optional[str] = None,
+        translation: Optional[torch.tensor] = None,
+        orientation: Optional[torch.tensor] = None,
+    ) -> None:
+
+        self._usd_path = usd_path
         self._name = name
 
         if self._usd_path is None:
             assets_root_path = get_assets_root_path()
             if assets_root_path is None:
                 carb.log_error("Could not find Isaac Sim assets folder")
-            self._usd_path = "omniverse://localhost/Projects/J3soon/Isaac/2023.1.1/Isaac/Robots/UR10/ur10_short_suction.usd"
+            self._usd_path = "omniverse://localhost/Projects/J3soon/Isaac/2022.1/Isaac/Robots/UR10/ur10_instanceable.usd"
+            # self._usd_path = "omniverse://localhost/Projects/J3soon/Isaac/2023.1.1/Isaac/Robots/UR10/ur10_long_suction.usd"
+            # self._usd_path = "omniverse://localhost/Projects/J3soon/Isaac/2023.1.1/Isaac/Robots/UR10/ur10_short_suction.usd"
+            # self._usd_path = (self.assets_root_path + "omniverse://localhost/Projects/J3soon/Isaac/2023.1.1/Isaac/Robots/ur10_bin_stacking_short_suction.usd")
+            # self._usd_path = "omniverse://localhost/Projects/J3soon/Isaac/2023.1.1/Isaac/Robots/UR10/ur10_with_hand_e.usd"
+            # self._usd_path = 'omniverse://localhost/Projects/J3soon/Isaac/2023.1.1/Isaac/Robots/UR10/ur10_with_2f_140_gripper.usd'
+            #self._usd_path = 'omniverse://localhost/Projects/J3soon/Isaac/2023.1.1/Isaac/Robots/UR10/ur10_instanceable.usd'
+            # self._usd_path = 'omniverse://localhost/Projects/J3soon/Isaac/2023.1.1/Isaac/Robots/UR10/ur10_gripper_140_instanceable.usd'
 
-        if attach_gripper:
-            self.attach_gripper()
+        # Depends on your real robot setup
+        self._position = torch.tensor([0.0, 0.0, 0.0]) if translation is None else translation
+        self._orientation = torch.tensor([1.0, 0.0, 0.0, 0.0]) if orientation is None else orientation
 
-    def create_ur10(world):
-        # Create UR10 robot
-        ur10 = world.scene.add(
-            UR10(
-                prim_path="/World/UR10",
-                name="UR10",
-                position=np.array([0, 0, 51.5]), 
-                attach_gripper=True
-                )
-            )
+        add_reference_to_stage(self._usd_path, prim_path)
 
-        # Set the robot's material to glass
-        ur10.set_material(OmniGlass)
+        super().__init__(
+            prim_path=prim_path,
+            name=name,
+            translation=self._position,
+            orientation=self._orientation,
+            articulation_controller=None,
+        )
