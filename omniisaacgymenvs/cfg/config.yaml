@@ -13,7 +13,7 @@ seed: 42
 torch_deterministic: False
 
 # set the maximum number of learning iterations to train for. overrides default per-environment setting
-max_iterations: 300000
+max_iterations: 960000
 
 ## Device config
 physics_engine: 'physx'

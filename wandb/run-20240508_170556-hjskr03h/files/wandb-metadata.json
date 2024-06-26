@@ -1,0 +1,27 @@
+{
+    "os": "Linux-5.15.0-105-generic-x86_64-with-glibc2.35",
+    "python": "3.10.13",
+    "heartbeatAt": "2024-05-08T17:05:58.382777",
+    "startedAt": "2024-05-08T17:05:56.738588",
+    "docker": null,
+    "gpu": "Tesla T4",
+    "gpu_count": 1,
+    "cpu_count": 16,
+    "cuda": null,
+    "args": [
+        "task=UR10Reacher",
+        "headless=True"
+    ],
+    "state": "running",
+    "program": "/home/vncusr/OmniIsaacGymEnvs/omniisaacgymenvs/scripts/rlgames_train.py",
+    "codePath": "omniisaacgymenvs/scripts/rlgames_train.py",
+    "git": {
+        "remote": "git@github.com:vollOlga/OmniIsaacGymEnvs.git",
+        "commit": "71eaa046370a1c1de68c2eb81df6de35c3d0f498"
+    },
+    "email": "boie@zhaw.ch",
+    "root": "/home/vncusr/OmniIsaacGymEnvs",
+    "host": "xpy",
+    "username": "vncusr",
+    "executable": "/home/vncusr/.local/share/ov/pkg/isaac_sim-2023.1.1/kit/python/bin/python3"
+}

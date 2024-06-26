@@ -46,6 +46,7 @@ def import_tasks():
     from omniisaacgymenvs.tasks.quadcopter import QuadcopterTask
     from omniisaacgymenvs.tasks.shadow_hand import ShadowHandTask
     from omniisaacgymenvs.tasks.UR10_reacher_task import UR10ReacherTask
+    from omniisaacgymenvs.tasks.UR10_pick_and_place import UR10PickAndPlaceTask
 
     from omniisaacgymenvs.tasks.warp.ant import AntLocomotionTask as AntLocomotionTaskWarp
     from omniisaacgymenvs.tasks.warp.cartpole import CartpoleTask as CartpoleTaskWarp
@@ -102,7 +103,7 @@ def initialize_task(config, env, init_sim=True):
     from omniisaacgymenvs.tasks.shadow_hand import ShadowHandTask
     from omniisaacgymenvs.tasks.crazyflie import CrazyflieTask
     from omniisaacgymenvs.tasks.UR10_reacher_task import UR10ReacherTask
-    from omniisaacgymenvs.tasks.UR10_pick_and_place import UR10PickAndPlace
+    from omniisaacgymenvs.tasks.UR10PickAndPlaceTask import UR10PickAndPlaceTask
 
     # Mappings from strings to environments
     task_map = {
@@ -121,7 +122,7 @@ def initialize_task(config, env, init_sim=True):
         "ShadowHandOpenAI_FF": ShadowHandTask,
         "ShadowHandOpenAI_LSTM": ShadowHandTask,
         "UR10Reacher": UR10ReacherTask,
-        'UR10PickAndPlace': UR10PickAndPlace,
+        'UR10PickAndPlace': UR10PickAndPlaceTask,
     }
 
     from .config_utils.sim_config import SimConfig

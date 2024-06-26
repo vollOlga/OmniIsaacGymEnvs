@@ -183,13 +183,13 @@ def parse_hydra_configs(cfg: DictConfig, sweep_id: str = None):
     # initialize task
     task = initialize_task(cfg_dict, env)
     
-    hyperparameters = {
-            "tau": cfg_dict['train']['params']['config']['tau'],
-            "lr": cfg_dict['train']['params']['config']['actor_lr'],
-            "num_warmup_steps": cfg_dict['train']['params']['config']['num_warmup_steps'],
-            'learning_rate': cfg_dict['train']['params']['config']['learning_rate']
+    #hyperparameters = {
+   #         "tau": cfg_dict['train']['params']['config']['tau'],
+    #        "lr": cfg_dict['train']['params']['config']['actor_lr'],
+     #       "num_warmup_steps": cfg_dict['train']['params']['config']['num_warmup_steps'],
+     #       'learning_rate': cfg_dict['train']['params']['config']['learning_rate']
             # Add all other hyperparameters here
-        }
+    #    }
     
     # initialize wandb
     if cfg.wandb_activate and global_rank == 0:

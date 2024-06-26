@@ -1,0 +1,12 @@
+self.seed = 42
+Started to play
+[BasePlayer] Creating regular env:  rlgpu
+{'observation_space': Box(-inf, inf, (29,), float32), 'action_space': Box(-1.0, 1.0, (6,), float32), 'agents': 1, 'value_size': 1}
+Building Actor
+build mlp: 29
+Building Critic
+build mlp: 35
+build mlp: 35
+Building Critic Target
+build mlp: 35
+build mlp: 35

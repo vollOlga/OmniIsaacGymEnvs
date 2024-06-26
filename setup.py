@@ -49,6 +49,7 @@ INSTALL_REQUIRES = [
     "gymnasium",
     "comet_ml",
     "wandb",
+    "pandas"
 ]
 
 # Installation operation

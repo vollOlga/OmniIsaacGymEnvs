@@ -1,0 +1,136 @@
+[91m[1m2024-05-08 16:59:09 [22,980ms] [Error] [omni.kit.app._impl] [py stderr]: Error executing job with overrides: ['task=UR10Reacher', 'headless=True']
+Error executing job with overrides: ['task=UR10Reacher', 'headless=True']
+[91m[1m2024-05-08 16:59:09 [22,981ms] [Error] [omni.kit.app._impl] [py stderr]: Traceback (most recent call last):
+Traceback (most recent call last):
+[91m[1m2024-05-08 16:59:09 [22,982ms] [Error] [omni.kit.app._impl] [py stderr]: 
+[91m[1m2024-05-08 16:59:09 [22,982ms] [Error] [omni.kit.app._impl] [py stderr]:   File "/home/vncusr/OmniIsaacGymEnvs/omniisaacgymenvs/scripts/rlgames_train.py", line 235, in <module>
+[91m[1m    parse_hydra_configs()
+  File "/home/vncusr/OmniIsaacGymEnvs/omniisaacgymenvs/scripts/rlgames_train.py", line 235, in <module>
+    parse_hydra_configs()
+[91m[1m2024-05-08 16:59:09 [22,982ms] [Error] [omni.kit.app._impl] [py stderr]: 
+[91m[1m2024-05-08 16:59:09 [22,982ms] [Error] [omni.kit.app._impl] [py stderr]:   File "/home/vncusr/.local/share/ov/pkg/isaac_sim-2023.1.1/kit/python/lib/python3.10/site-packages/hydra/main.py", line 94, in decorated_main
+[91m[1m    _run_hydra(
+  File "/home/vncusr/.local/share/ov/pkg/isaac_sim-2023.1.1/kit/python/lib/python3.10/site-packages/hydra/main.py", line 94, in decorated_main
+    _run_hydra(
+[91m[1m2024-05-08 16:59:09 [22,982ms] [Error] [omni.kit.app._impl] [py stderr]: 
+[91m[1m2024-05-08 16:59:09 [22,982ms] [Error] [omni.kit.app._impl] [py stderr]:   File "/home/vncusr/.local/share/ov/pkg/isaac_sim-2023.1.1/kit/python/lib/python3.10/site-packages/hydra/_internal/utils.py", line 394, in _run_hydra
+[91m[1m    _run_app(
+  File "/home/vncusr/.local/share/ov/pkg/isaac_sim-2023.1.1/kit/python/lib/python3.10/site-packages/hydra/_internal/utils.py", line 394, in _run_hydra
+    _run_app(
+[91m[1m2024-05-08 16:59:09 [22,982ms] [Error] [omni.kit.app._impl] [py stderr]: 
+[91m[1m2024-05-08 16:59:09 [22,982ms] [Error] [omni.kit.app._impl] [py stderr]:   File "/home/vncusr/.local/share/ov/pkg/isaac_sim-2023.1.1/kit/python/lib/python3.10/site-packages/hydra/_internal/utils.py", line 457, in _run_app
+[91m[1m    run_and_report(
+  File "/home/vncusr/.local/share/ov/pkg/isaac_sim-2023.1.1/kit/python/lib/python3.10/site-packages/hydra/_internal/utils.py", line 457, in _run_app
+    run_and_report(
+[91m[1m2024-05-08 16:59:09 [22,982ms] [Error] [omni.kit.app._impl] [py stderr]: 
+[91m[1m2024-05-08 16:59:09 [22,982ms] [Error] [omni.kit.app._impl] [py stderr]:   File "/home/vncusr/.local/share/ov/pkg/isaac_sim-2023.1.1/kit/python/lib/python3.10/site-packages/hydra/_internal/utils.py", line 223, in run_and_report
+[91m[1m    raise ex
+  File "/home/vncusr/.local/share/ov/pkg/isaac_sim-2023.1.1/kit/python/lib/python3.10/site-packages/hydra/_internal/utils.py", line 223, in run_and_report
+    raise ex
+[91m[1m2024-05-08 16:59:09 [22,982ms] [Error] [omni.kit.app._impl] [py stderr]: 
+[91m[1m2024-05-08 16:59:09 [22,983ms] [Error] [omni.kit.app._impl] [py stderr]:   File "/home/vncusr/.local/share/ov/pkg/isaac_sim-2023.1.1/kit/python/lib/python3.10/site-packages/hydra/_internal/utils.py", line 220, in run_and_report
+[91m[1m    return func()
+  File "/home/vncusr/.local/share/ov/pkg/isaac_sim-2023.1.1/kit/python/lib/python3.10/site-packages/hydra/_internal/utils.py", line 220, in run_and_report
+    return func()
+[91m[1m2024-05-08 16:59:09 [22,983ms] [Error] [omni.kit.app._impl] [py stderr]: 
+[91m[1m2024-05-08 16:59:09 [22,983ms] [Error] [omni.kit.app._impl] [py stderr]:   File "/home/vncusr/.local/share/ov/pkg/isaac_sim-2023.1.1/kit/python/lib/python3.10/site-packages/hydra/_internal/utils.py", line 458, in <lambda>
+[91m[1m    lambda: hydra.run(
+  File "/home/vncusr/.local/share/ov/pkg/isaac_sim-2023.1.1/kit/python/lib/python3.10/site-packages/hydra/_internal/utils.py", line 458, in <lambda>
+    lambda: hydra.run(
+[91m[1m2024-05-08 16:59:09 [22,983ms] [Error] [omni.kit.app._impl] [py stderr]: 
+[91m[1m2024-05-08 16:59:09 [22,983ms] [Error] [omni.kit.app._impl] [py stderr]:   File "/home/vncusr/.local/share/ov/pkg/isaac_sim-2023.1.1/kit/python/lib/python3.10/site-packages/hydra/_internal/hydra.py", line 132, in run
+[91m[1m    _ = ret.return_value
+  File "/home/vncusr/.local/share/ov/pkg/isaac_sim-2023.1.1/kit/python/lib/python3.10/site-packages/hydra/_internal/hydra.py", line 132, in run
+    _ = ret.return_value
+[91m[1m2024-05-08 16:59:09 [22,983ms] [Error] [omni.kit.app._impl] [py stderr]: 
+[91m[1m2024-05-08 16:59:09 [22,983ms] [Error] [omni.kit.app._impl] [py stderr]:   File "/home/vncusr/.local/share/ov/pkg/isaac_sim-2023.1.1/kit/python/lib/python3.10/site-packages/hydra/core/utils.py", line 260, in return_value
+[91m[1m    raise self._return_value
+  File "/home/vncusr/.local/share/ov/pkg/isaac_sim-2023.1.1/kit/python/lib/python3.10/site-packages/hydra/core/utils.py", line 260, in return_value
+    raise self._return_value
+[91m[1m2024-05-08 16:59:09 [22,983ms] [Error] [omni.kit.app._impl] [py stderr]: 
+[91m[1m2024-05-08 16:59:09 [22,983ms] [Error] [omni.kit.app._impl] [py stderr]:   File "/home/vncusr/.local/share/ov/pkg/isaac_sim-2023.1.1/kit/python/lib/python3.10/site-packages/hydra/core/utils.py", line 186, in run_job
+[91m[1m    ret.return_value = task_function(task_cfg)
+  File "/home/vncusr/.local/share/ov/pkg/isaac_sim-2023.1.1/kit/python/lib/python3.10/site-packages/hydra/core/utils.py", line 186, in run_job
+    ret.return_value = task_function(task_cfg)
+[91m[1m2024-05-08 16:59:09 [22,983ms] [Error] [omni.kit.app._impl] [py stderr]: 
+[91m[1m2024-05-08 16:59:09 [22,983ms] [Error] [omni.kit.app._impl] [py stderr]:   File "/home/vncusr/OmniIsaacGymEnvs/omniisaacgymenvs/scripts/rlgames_train.py", line 226, in parse_hydra_configs
+[91m[1m    rlg_trainer = RLGTrainer(cfg, cfg_dict, sweep_id=sweep_id)
+  File "/home/vncusr/OmniIsaacGymEnvs/omniisaacgymenvs/scripts/rlgames_train.py", line 226, in parse_hydra_configs
+    rlg_trainer = RLGTrainer(cfg, cfg_dict, sweep_id=sweep_id)
+[91m[1m2024-05-08 16:59:09 [22,983ms] [Error] [omni.kit.app._impl] [py stderr]: 
+[91m[1m2024-05-08 16:59:09 [22,983ms] [Error] [omni.kit.app._impl] [py stderr]: TypeError: RLGTrainer.__init__() got an unexpected keyword argument 'sweep_id'
+TypeError: RLGTrainer.__init__() got an unexpected keyword argument 'sweep_id'
+[91m[1m2024-05-08 16:59:09 [22,984ms] [Error] [omni.kit.app._impl] [py stderr]: 
+[91m[1m2024-05-08 16:59:09 [22,984ms] [Error] [omni.kit.app._impl] [py stderr]: Traceback (most recent call last):
+Traceback (most recent call last):
+[91m[1m2024-05-08 16:59:09 [22,984ms] [Error] [omni.kit.app._impl] [py stderr]:   File "/home/vncusr/OmniIsaacGymEnvs/omniisaacgymenvs/scripts/rlgames_train.py", line 235, in <module>
+  File "/home/vncusr/OmniIsaacGymEnvs/omniisaacgymenvs/scripts/rlgames_train.py", line 235, in <module>
+[91m[1m2024-05-08 16:59:09 [22,984ms] [Error] [omni.kit.app._impl] [py stderr]:     
+[91m[1m2024-05-08 16:59:09 [22,984ms] [Error] [omni.kit.app._impl] [py stderr]: parse_hydra_configs()
+[91m[1m2024-05-08 16:59:09 [22,984ms] [Error] [omni.kit.app._impl] [py stderr]: 
+    parse_hydra_configs()
+[91m[1m2024-05-08 16:59:09 [22,984ms] [Error] [omni.kit.app._impl] [py stderr]:   File "/home/vncusr/.local/share/ov/pkg/isaac_sim-2023.1.1/kit/python/lib/python3.10/site-packages/hydra/main.py", line 94, in decorated_main
+  File "/home/vncusr/.local/share/ov/pkg/isaac_sim-2023.1.1/kit/python/lib/python3.10/site-packages/hydra/main.py", line 94, in decorated_main
+[91m[1m2024-05-08 16:59:09 [22,984ms] [Error] [omni.kit.app._impl] [py stderr]:     
+[91m[1m2024-05-08 16:59:09 [22,985ms] [Error] [omni.kit.app._impl] [py stderr]: _run_hydra(
+[91m[1m2024-05-08 16:59:09 [22,985ms] [Error] [omni.kit.app._impl] [py stderr]: 
+    _run_hydra(
+[91m[1m2024-05-08 16:59:09 [22,985ms] [Error] [omni.kit.app._impl] [py stderr]:   File "/home/vncusr/.local/share/ov/pkg/isaac_sim-2023.1.1/kit/python/lib/python3.10/site-packages/hydra/_internal/utils.py", line 394, in _run_hydra
+  File "/home/vncusr/.local/share/ov/pkg/isaac_sim-2023.1.1/kit/python/lib/python3.10/site-packages/hydra/_internal/utils.py", line 394, in _run_hydra
+[91m[1m2024-05-08 16:59:09 [22,985ms] [Error] [omni.kit.app._impl] [py stderr]:     
+[91m[1m2024-05-08 16:59:09 [22,985ms] [Error] [omni.kit.app._impl] [py stderr]: _run_app(
+[91m[1m2024-05-08 16:59:09 [22,985ms] [Error] [omni.kit.app._impl] [py stderr]: 
+    _run_app(
+[91m[1m2024-05-08 16:59:09 [22,985ms] [Error] [omni.kit.app._impl] [py stderr]:   File "/home/vncusr/.local/share/ov/pkg/isaac_sim-2023.1.1/kit/python/lib/python3.10/site-packages/hydra/_internal/utils.py", line 457, in _run_app
+  File "/home/vncusr/.local/share/ov/pkg/isaac_sim-2023.1.1/kit/python/lib/python3.10/site-packages/hydra/_internal/utils.py", line 457, in _run_app
+[91m[1m2024-05-08 16:59:09 [22,985ms] [Error] [omni.kit.app._impl] [py stderr]:     
+[91m[1m2024-05-08 16:59:09 [22,985ms] [Error] [omni.kit.app._impl] [py stderr]: run_and_report(
+[91m[1m2024-05-08 16:59:09 [22,985ms] [Error] [omni.kit.app._impl] [py stderr]: 
+    run_and_report(
+[91m[1m2024-05-08 16:59:09 [22,985ms] [Error] [omni.kit.app._impl] [py stderr]:   File "/home/vncusr/.local/share/ov/pkg/isaac_sim-2023.1.1/kit/python/lib/python3.10/site-packages/hydra/_internal/utils.py", line 223, in run_and_report
+  File "/home/vncusr/.local/share/ov/pkg/isaac_sim-2023.1.1/kit/python/lib/python3.10/site-packages/hydra/_internal/utils.py", line 223, in run_and_report
+[91m[1m2024-05-08 16:59:09 [22,985ms] [Error] [omni.kit.app._impl] [py stderr]:     
+[91m[1m2024-05-08 16:59:09 [22,985ms] [Error] [omni.kit.app._impl] [py stderr]: raise ex
+[91m[1m2024-05-08 16:59:09 [22,986ms] [Error] [omni.kit.app._impl] [py stderr]: 
+    raise ex
+[91m[1m2024-05-08 16:59:09 [22,986ms] [Error] [omni.kit.app._impl] [py stderr]:   File "/home/vncusr/.local/share/ov/pkg/isaac_sim-2023.1.1/kit/python/lib/python3.10/site-packages/hydra/_internal/utils.py", line 220, in run_and_report
+  File "/home/vncusr/.local/share/ov/pkg/isaac_sim-2023.1.1/kit/python/lib/python3.10/site-packages/hydra/_internal/utils.py", line 220, in run_and_report
+[91m[1m2024-05-08 16:59:09 [22,986ms] [Error] [omni.kit.app._impl] [py stderr]:     
+[91m[1m2024-05-08 16:59:09 [22,986ms] [Error] [omni.kit.app._impl] [py stderr]: return func()
+[91m[1m2024-05-08 16:59:09 [22,986ms] [Error] [omni.kit.app._impl] [py stderr]: 
+    return func()
+[91m[1m2024-05-08 16:59:09 [22,986ms] [Error] [omni.kit.app._impl] [py stderr]:   File "/home/vncusr/.local/share/ov/pkg/isaac_sim-2023.1.1/kit/python/lib/python3.10/site-packages/hydra/_internal/utils.py", line 458, in <lambda>
+  File "/home/vncusr/.local/share/ov/pkg/isaac_sim-2023.1.1/kit/python/lib/python3.10/site-packages/hydra/_internal/utils.py", line 458, in <lambda>
+[91m[1m2024-05-08 16:59:09 [22,986ms] [Error] [omni.kit.app._impl] [py stderr]:     
+[91m[1m2024-05-08 16:59:09 [22,986ms] [Error] [omni.kit.app._impl] [py stderr]: lambda: hydra.run(
+[91m[1m2024-05-08 16:59:09 [22,986ms] [Error] [omni.kit.app._impl] [py stderr]: 
+    lambda: hydra.run(
+[91m[1m2024-05-08 16:59:09 [22,986ms] [Error] [omni.kit.app._impl] [py stderr]:   File "/home/vncusr/.local/share/ov/pkg/isaac_sim-2023.1.1/kit/python/lib/python3.10/site-packages/hydra/_internal/hydra.py", line 132, in run
+  File "/home/vncusr/.local/share/ov/pkg/isaac_sim-2023.1.1/kit/python/lib/python3.10/site-packages/hydra/_internal/hydra.py", line 132, in run
+[91m[1m2024-05-08 16:59:09 [22,986ms] [Error] [omni.kit.app._impl] [py stderr]:     
+[91m[1m2024-05-08 16:59:09 [22,986ms] [Error] [omni.kit.app._impl] [py stderr]: _ = ret.return_value
+[91m[1m2024-05-08 16:59:09 [22,986ms] [Error] [omni.kit.app._impl] [py stderr]: 
+    _ = ret.return_value
+[91m[1m2024-05-08 16:59:09 [22,987ms] [Error] [omni.kit.app._impl] [py stderr]:   File "/home/vncusr/.local/share/ov/pkg/isaac_sim-2023.1.1/kit/python/lib/python3.10/site-packages/hydra/core/utils.py", line 260, in return_value
+  File "/home/vncusr/.local/share/ov/pkg/isaac_sim-2023.1.1/kit/python/lib/python3.10/site-packages/hydra/core/utils.py", line 260, in return_value
+[91m[1m2024-05-08 16:59:09 [22,987ms] [Error] [omni.kit.app._impl] [py stderr]:     
+[91m[1m2024-05-08 16:59:09 [22,987ms] [Error] [omni.kit.app._impl] [py stderr]: raise self._return_value
+[91m[1m2024-05-08 16:59:09 [22,987ms] [Error] [omni.kit.app._impl] [py stderr]: 
+    raise self._return_value
+[91m[1m2024-05-08 16:59:09 [22,987ms] [Error] [omni.kit.app._impl] [py stderr]:   File "/home/vncusr/.local/share/ov/pkg/isaac_sim-2023.1.1/kit/python/lib/python3.10/site-packages/hydra/core/utils.py", line 186, in run_job
+  File "/home/vncusr/.local/share/ov/pkg/isaac_sim-2023.1.1/kit/python/lib/python3.10/site-packages/hydra/core/utils.py", line 186, in run_job
+[91m[1m2024-05-08 16:59:09 [22,987ms] [Error] [omni.kit.app._impl] [py stderr]:     
+[91m[1m2024-05-08 16:59:09 [22,987ms] [Error] [omni.kit.app._impl] [py stderr]: ret.return_value = task_function(task_cfg)
+[91m[1m2024-05-08 16:59:09 [22,987ms] [Error] [omni.kit.app._impl] [py stderr]: 
+    ret.return_value = task_function(task_cfg)
+[91m[1m2024-05-08 16:59:09 [22,987ms] [Error] [omni.kit.app._impl] [py stderr]:   File "/home/vncusr/OmniIsaacGymEnvs/omniisaacgymenvs/scripts/rlgames_train.py", line 226, in parse_hydra_configs
+  File "/home/vncusr/OmniIsaacGymEnvs/omniisaacgymenvs/scripts/rlgames_train.py", line 226, in parse_hydra_configs
+[91m[1m2024-05-08 16:59:09 [22,987ms] [Error] [omni.kit.app._impl] [py stderr]:     
+[91m[1m2024-05-08 16:59:09 [22,987ms] [Error] [omni.kit.app._impl] [py stderr]: rlg_trainer = RLGTrainer(cfg, cfg_dict, sweep_id=sweep_id)
+[91m[1m2024-05-08 16:59:09 [22,987ms] [Error] [omni.kit.app._impl] [py stderr]: 
+    rlg_trainer = RLGTrainer(cfg, cfg_dict, sweep_id=sweep_id)
+[91m[1m2024-05-08 16:59:09 [22,987ms] [Error] [omni.kit.app._impl] [py stderr]: TypeError
+[91m[1m2024-05-08 16:59:09 [22,988ms] [Error] [omni.kit.app._impl] [py stderr]: : 
+[91m[1m2024-05-08 16:59:09 [22,988ms] [Error] [omni.kit.app._impl] [py stderr]: RLGTrainer.__init__() got an unexpected keyword argument 'sweep_id'
+[91m[1m2024-05-08 16:59:09 [22,988ms] [Error] [omni.kit.app._impl] [py stderr]: 
+TypeError: RLGTrainer.__init__() got an unexpected keyword argument 'sweep_id'

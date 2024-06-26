@@ -1,0 +1,268 @@
+self.seed = 42
+Started to play
+[BasePlayer] Creating regular env:  rlgpu
+{'observation_space': Box(-inf, inf, (29,), float32), 'action_space': Box(-1.0, 1.0, (6,), float32), 'agents': 1, 'value_size': 1}
+Building Actor
+build mlp: 29
+Building Critic
+build mlp: 35
+build mlp: 35
+Building Critic Target
+build mlp: 35
+build mlp: 35
+Layer Name: sac_network.actor.trunk.0.weight, Parameter Shape: torch.Size([512, 29])
+Layer Name: sac_network.actor.trunk.0.bias, Parameter Shape: torch.Size([512])
+Layer Name: sac_network.actor.trunk.2.weight, Parameter Shape: torch.Size([256, 512])
+Layer Name: sac_network.actor.trunk.2.bias, Parameter Shape: torch.Size([256])
+Layer Name: sac_network.actor.trunk.4.weight, Parameter Shape: torch.Size([128, 256])
+Layer Name: sac_network.actor.trunk.4.bias, Parameter Shape: torch.Size([128])
+Layer Name: sac_network.actor.trunk.6.weight, Parameter Shape: torch.Size([12, 128])
+Layer Name: sac_network.actor.trunk.6.bias, Parameter Shape: torch.Size([12])
+Layer Name: sac_network.critic.Q1.0.weight, Parameter Shape: torch.Size([512, 35])
+Layer Name: sac_network.critic.Q1.0.bias, Parameter Shape: torch.Size([512])
+Layer Name: sac_network.critic.Q1.2.weight, Parameter Shape: torch.Size([256, 512])
+Layer Name: sac_network.critic.Q1.2.bias, Parameter Shape: torch.Size([256])
+Layer Name: sac_network.critic.Q1.4.weight, Parameter Shape: torch.Size([128, 256])
+Layer Name: sac_network.critic.Q1.4.bias, Parameter Shape: torch.Size([128])
+Layer Name: sac_network.critic.Q1.6.weight, Parameter Shape: torch.Size([1, 128])
+Layer Name: sac_network.critic.Q1.6.bias, Parameter Shape: torch.Size([1])
+Layer Name: sac_network.critic.Q2.0.weight, Parameter Shape: torch.Size([512, 35])
+Layer Name: sac_network.critic.Q2.0.bias, Parameter Shape: torch.Size([512])
+Layer Name: sac_network.critic.Q2.2.weight, Parameter Shape: torch.Size([256, 512])
+Layer Name: sac_network.critic.Q2.2.bias, Parameter Shape: torch.Size([256])
+Layer Name: sac_network.critic.Q2.4.weight, Parameter Shape: torch.Size([128, 256])
+Layer Name: sac_network.critic.Q2.4.bias, Parameter Shape: torch.Size([128])
+Layer Name: sac_network.critic.Q2.6.weight, Parameter Shape: torch.Size([1, 128])
+Layer Name: sac_network.critic.Q2.6.bias, Parameter Shape: torch.Size([1])
+Layer Name: sac_network.critic_target.Q1.0.weight, Parameter Shape: torch.Size([512, 35])
+Layer Name: sac_network.critic_target.Q1.0.bias, Parameter Shape: torch.Size([512])
+Layer Name: sac_network.critic_target.Q1.2.weight, Parameter Shape: torch.Size([256, 512])
+Layer Name: sac_network.critic_target.Q1.2.bias, Parameter Shape: torch.Size([256])
+Layer Name: sac_network.critic_target.Q1.4.weight, Parameter Shape: torch.Size([128, 256])
+Layer Name: sac_network.critic_target.Q1.4.bias, Parameter Shape: torch.Size([128])
+Layer Name: sac_network.critic_target.Q1.6.weight, Parameter Shape: torch.Size([1, 128])
+Layer Name: sac_network.critic_target.Q1.6.bias, Parameter Shape: torch.Size([1])
+Layer Name: sac_network.critic_target.Q2.0.weight, Parameter Shape: torch.Size([512, 35])
+Layer Name: sac_network.critic_target.Q2.0.bias, Parameter Shape: torch.Size([512])
+Layer Name: sac_network.critic_target.Q2.2.weight, Parameter Shape: torch.Size([256, 512])
+Layer Name: sac_network.critic_target.Q2.2.bias, Parameter Shape: torch.Size([256])
+Layer Name: sac_network.critic_target.Q2.4.weight, Parameter Shape: torch.Size([128, 256])
+Layer Name: sac_network.critic_target.Q2.4.bias, Parameter Shape: torch.Size([128])
+Layer Name: sac_network.critic_target.Q2.6.weight, Parameter Shape: torch.Size([1, 128])
+Layer Name: sac_network.critic_target.Q2.6.bias, Parameter Shape: torch.Size([1])
+[91m[1m2024-05-08 15:59:24 [36,782ms] [Error] [omni.kit.app._impl] [py stderr]: Error executing job with overrides: ['task=UR10Reacher', 'num_envs=64', 'checkpoint=omniisaacgymenvs/runs/UR10Reacher/nn/last_UR10Reacher_ep_251200_rew_1971.0665.pth']
+Error executing job with overrides: ['task=UR10Reacher', 'num_envs=64', 'checkpoint=omniisaacgymenvs/runs/UR10Reacher/nn/last_UR10Reacher_ep_251200_rew_1971.0665.pth']
+[91m[1m2024-05-08 15:59:24 [36,793ms] [Error] [omni.kit.app._impl] [py stderr]: Traceback (most recent call last):
+Traceback (most recent call last):
+[91m[1m2024-05-08 15:59:24 [36,793ms] [Error] [omni.kit.app._impl] [py stderr]: 
+[91m[1m2024-05-08 15:59:24 [36,793ms] [Error] [omni.kit.app._impl] [py stderr]:   File "/home/vncusr/OmniIsaacGymEnvs/omniisaacgymenvs/scripts/rlgames_play.py", line 104, in <module>
+[91m[1m    parse_hydra_configs()
+  File "/home/vncusr/OmniIsaacGymEnvs/omniisaacgymenvs/scripts/rlgames_play.py", line 104, in <module>
+    parse_hydra_configs()
+[91m[1m2024-05-08 15:59:24 [36,793ms] [Error] [omni.kit.app._impl] [py stderr]: 
+[91m[1m2024-05-08 15:59:24 [36,793ms] [Error] [omni.kit.app._impl] [py stderr]:   File "/home/vncusr/.local/share/ov/pkg/isaac_sim-2023.1.1/kit/python/lib/python3.10/site-packages/hydra/main.py", line 94, in decorated_main
+[91m[1m    _run_hydra(
+  File "/home/vncusr/.local/share/ov/pkg/isaac_sim-2023.1.1/kit/python/lib/python3.10/site-packages/hydra/main.py", line 94, in decorated_main
+    _run_hydra(
+[91m[1m2024-05-08 15:59:24 [36,794ms] [Error] [omni.kit.app._impl] [py stderr]: 
+[91m[1m2024-05-08 15:59:24 [36,794ms] [Error] [omni.kit.app._impl] [py stderr]:   File "/home/vncusr/.local/share/ov/pkg/isaac_sim-2023.1.1/kit/python/lib/python3.10/site-packages/hydra/_internal/utils.py", line 394, in _run_hydra
+[91m[1m    _run_app(
+  File "/home/vncusr/.local/share/ov/pkg/isaac_sim-2023.1.1/kit/python/lib/python3.10/site-packages/hydra/_internal/utils.py", line 394, in _run_hydra
+    _run_app(
+[91m[1m2024-05-08 15:59:24 [36,794ms] [Error] [omni.kit.app._impl] [py stderr]: 
+[91m[1m2024-05-08 15:59:24 [36,794ms] [Error] [omni.kit.app._impl] [py stderr]:   File "/home/vncusr/.local/share/ov/pkg/isaac_sim-2023.1.1/kit/python/lib/python3.10/site-packages/hydra/_internal/utils.py", line 457, in _run_app
+[91m[1m    run_and_report(
+  File "/home/vncusr/.local/share/ov/pkg/isaac_sim-2023.1.1/kit/python/lib/python3.10/site-packages/hydra/_internal/utils.py", line 457, in _run_app
+    run_and_report(
+[91m[1m2024-05-08 15:59:24 [36,794ms] [Error] [omni.kit.app._impl] [py stderr]: 
+[91m[1m2024-05-08 15:59:24 [36,794ms] [Error] [omni.kit.app._impl] [py stderr]:   File "/home/vncusr/.local/share/ov/pkg/isaac_sim-2023.1.1/kit/python/lib/python3.10/site-packages/hydra/_internal/utils.py", line 223, in run_and_report
+[91m[1m    raise ex
+  File "/home/vncusr/.local/share/ov/pkg/isaac_sim-2023.1.1/kit/python/lib/python3.10/site-packages/hydra/_internal/utils.py", line 223, in run_and_report
+    raise ex
+[91m[1m2024-05-08 15:59:24 [36,794ms] [Error] [omni.kit.app._impl] [py stderr]: 
+[91m[1m2024-05-08 15:59:24 [36,794ms] [Error] [omni.kit.app._impl] [py stderr]:   File "/home/vncusr/.local/share/ov/pkg/isaac_sim-2023.1.1/kit/python/lib/python3.10/site-packages/hydra/_internal/utils.py", line 220, in run_and_report
+[91m[1m    return func()
+  File "/home/vncusr/.local/share/ov/pkg/isaac_sim-2023.1.1/kit/python/lib/python3.10/site-packages/hydra/_internal/utils.py", line 220, in run_and_report
+    return func()
+[91m[1m2024-05-08 15:59:24 [36,794ms] [Error] [omni.kit.app._impl] [py stderr]: 
+[91m[1m2024-05-08 15:59:24 [36,794ms] [Error] [omni.kit.app._impl] [py stderr]:   File "/home/vncusr/.local/share/ov/pkg/isaac_sim-2023.1.1/kit/python/lib/python3.10/site-packages/hydra/_internal/utils.py", line 458, in <lambda>
+[91m[1m    lambda: hydra.run(
+  File "/home/vncusr/.local/share/ov/pkg/isaac_sim-2023.1.1/kit/python/lib/python3.10/site-packages/hydra/_internal/utils.py", line 458, in <lambda>
+    lambda: hydra.run(
+[91m[1m2024-05-08 15:59:24 [36,794ms] [Error] [omni.kit.app._impl] [py stderr]: 
+[91m[1m2024-05-08 15:59:24 [36,794ms] [Error] [omni.kit.app._impl] [py stderr]:   File "/home/vncusr/.local/share/ov/pkg/isaac_sim-2023.1.1/kit/python/lib/python3.10/site-packages/hydra/_internal/hydra.py", line 132, in run
+[91m[1m    _ = ret.return_value
+  File "/home/vncusr/.local/share/ov/pkg/isaac_sim-2023.1.1/kit/python/lib/python3.10/site-packages/hydra/_internal/hydra.py", line 132, in run
+    _ = ret.return_value
+[91m[1m2024-05-08 15:59:24 [36,794ms] [Error] [omni.kit.app._impl] [py stderr]: 
+[91m[1m2024-05-08 15:59:24 [36,794ms] [Error] [omni.kit.app._impl] [py stderr]:   File "/home/vncusr/.local/share/ov/pkg/isaac_sim-2023.1.1/kit/python/lib/python3.10/site-packages/hydra/core/utils.py", line 260, in return_value
+[91m[1m    raise self._return_value
+  File "/home/vncusr/.local/share/ov/pkg/isaac_sim-2023.1.1/kit/python/lib/python3.10/site-packages/hydra/core/utils.py", line 260, in return_value
+    raise self._return_value
+[91m[1m2024-05-08 15:59:24 [36,794ms] [Error] [omni.kit.app._impl] [py stderr]: 
+[91m[1m2024-05-08 15:59:24 [36,794ms] [Error] [omni.kit.app._impl] [py stderr]:   File "/home/vncusr/.local/share/ov/pkg/isaac_sim-2023.1.1/kit/python/lib/python3.10/site-packages/hydra/core/utils.py", line 186, in run_job
+[91m[1m    ret.return_value = task_function(task_cfg)
+  File "/home/vncusr/.local/share/ov/pkg/isaac_sim-2023.1.1/kit/python/lib/python3.10/site-packages/hydra/core/utils.py", line 186, in run_job
+    ret.return_value = task_function(task_cfg)
+[91m[1m2024-05-08 15:59:24 [36,794ms] [Error] [omni.kit.app._impl] [py stderr]: 
+[91m[1m2024-05-08 15:59:24 [36,794ms] [Error] [omni.kit.app._impl] [py stderr]:   File "/home/vncusr/OmniIsaacGymEnvs/omniisaacgymenvs/scripts/rlgames_play.py", line 96, in parse_hydra_configs
+[91m[1m    rlg_trainer.run(module_path=module_path, experiment_dir=experiment_dir)
+  File "/home/vncusr/OmniIsaacGymEnvs/omniisaacgymenvs/scripts/rlgames_play.py", line 96, in parse_hydra_configs
+    rlg_trainer.run(module_path=module_path, experiment_dir=experiment_dir)
+[91m[1m2024-05-08 15:59:24 [36,794ms] [Error] [omni.kit.app._impl] [py stderr]: 
+[91m[1m2024-05-08 15:59:24 [36,795ms] [Error] [omni.kit.app._impl] [py stderr]:   File "/home/vncusr/OmniIsaacGymEnvs/omniisaacgymenvs/scripts/rlgames_train.py", line 106, in run
+[91m[1m    runner.run(
+  File "/home/vncusr/OmniIsaacGymEnvs/omniisaacgymenvs/scripts/rlgames_train.py", line 106, in run
+    runner.run(
+[91m[1m2024-05-08 15:59:24 [36,795ms] [Error] [omni.kit.app._impl] [py stderr]: 
+[91m[1m2024-05-08 15:59:24 [36,795ms] [Error] [omni.kit.app._impl] [py stderr]:   File "/home/vncusr/.local/share/ov/pkg/isaac_sim-2023.1.1/kit/python/lib/python3.10/site-packages/rl_games/torch_runner.py", line 135, in run
+[91m[1m    self.run_play(args)
+  File "/home/vncusr/.local/share/ov/pkg/isaac_sim-2023.1.1/kit/python/lib/python3.10/site-packages/rl_games/torch_runner.py", line 135, in run
+    self.run_play(args)
+[91m[1m2024-05-08 15:59:24 [36,795ms] [Error] [omni.kit.app._impl] [py stderr]: 
+[91m[1m2024-05-08 15:59:24 [36,795ms] [Error] [omni.kit.app._impl] [py stderr]:   File "/home/vncusr/.local/share/ov/pkg/isaac_sim-2023.1.1/kit/python/lib/python3.10/site-packages/rl_games/torch_runner.py", line 120, in run_play
+[91m[1m    player = self.create_player()
+  File "/home/vncusr/.local/share/ov/pkg/isaac_sim-2023.1.1/kit/python/lib/python3.10/site-packages/rl_games/torch_runner.py", line 120, in run_play
+    player = self.create_player()
+[91m[1m2024-05-08 15:59:24 [36,795ms] [Error] [omni.kit.app._impl] [py stderr]: 
+[91m[1m2024-05-08 15:59:24 [36,795ms] [Error] [omni.kit.app._impl] [py stderr]:   File "/home/vncusr/.local/share/ov/pkg/isaac_sim-2023.1.1/kit/python/lib/python3.10/site-packages/rl_games/torch_runner.py", line 126, in create_player
+[91m[1m    return self.player_factory.create(self.algo_name, params=self.params)
+  File "/home/vncusr/.local/share/ov/pkg/isaac_sim-2023.1.1/kit/python/lib/python3.10/site-packages/rl_games/torch_runner.py", line 126, in create_player
+    return self.player_factory.create(self.algo_name, params=self.params)
+[91m[1m2024-05-08 15:59:24 [36,795ms] [Error] [omni.kit.app._impl] [py stderr]: 
+[91m[1m2024-05-08 15:59:24 [36,795ms] [Error] [omni.kit.app._impl] [py stderr]:   File "/home/vncusr/.local/share/ov/pkg/isaac_sim-2023.1.1/kit/python/lib/python3.10/site-packages/rl_games/common/object_factory.py", line 15, in create
+[91m[1m    return builder(**kwargs)
+  File "/home/vncusr/.local/share/ov/pkg/isaac_sim-2023.1.1/kit/python/lib/python3.10/site-packages/rl_games/common/object_factory.py", line 15, in create
+    return builder(**kwargs)
+[91m[1m2024-05-08 15:59:24 [36,795ms] [Error] [omni.kit.app._impl] [py stderr]: 
+[91m[1m2024-05-08 15:59:24 [36,795ms] [Error] [omni.kit.app._impl] [py stderr]:   File "/home/vncusr/.local/share/ov/pkg/isaac_sim-2023.1.1/kit/python/lib/python3.10/site-packages/rl_games/torch_runner.py", line 45, in <lambda>
+[91m[1m    self.player_factory.register_builder('sac', lambda **kwargs : players.SACPlayer(**kwargs))
+  File "/home/vncusr/.local/share/ov/pkg/isaac_sim-2023.1.1/kit/python/lib/python3.10/site-packages/rl_games/torch_runner.py", line 45, in <lambda>
+    self.player_factory.register_builder('sac', lambda **kwargs : players.SACPlayer(**kwargs))
+[91m[1m2024-05-08 15:59:24 [36,795ms] [Error] [omni.kit.app._impl] [py stderr]: 
+[91m[1m2024-05-08 15:59:24 [36,795ms] [Error] [omni.kit.app._impl] [py stderr]:   File "/home/vncusr/.local/share/ov/pkg/isaac_sim-2023.1.1/kit/python/lib/python3.10/site-packages/rl_games/algos_torch/players.py", line 223, in __init__
+[91m[1m    self.model.sac_network.actor.load_state_dict(checkpoint['actor'])
+  File "/home/vncusr/.local/share/ov/pkg/isaac_sim-2023.1.1/kit/python/lib/python3.10/site-packages/rl_games/algos_torch/players.py", line 223, in __init__
+    self.model.sac_network.actor.load_state_dict(checkpoint['actor'])
+[91m[1m2024-05-08 15:59:24 [36,795ms] [Error] [omni.kit.app._impl] [py stderr]: 
+[91m[1m2024-05-08 15:59:24 [36,795ms] [Error] [omni.kit.app._impl] [py stderr]: NameError: name 'checkpoint' is not defined
+NameError: name 'checkpoint' is not defined
+[91m[1m2024-05-08 15:59:24 [36,795ms] [Error] [omni.kit.app._impl] [py stderr]: 
+[91m[1m2024-05-08 15:59:24 [36,796ms] [Error] [omni.kit.app._impl] [py stderr]: Traceback (most recent call last):
+Traceback (most recent call last):
+[91m[1m2024-05-08 15:59:24 [36,796ms] [Error] [omni.kit.app._impl] [py stderr]:   File "/home/vncusr/OmniIsaacGymEnvs/omniisaacgymenvs/scripts/rlgames_play.py", line 104, in <module>
+  File "/home/vncusr/OmniIsaacGymEnvs/omniisaacgymenvs/scripts/rlgames_play.py", line 104, in <module>
+[91m[1m2024-05-08 15:59:24 [36,796ms] [Error] [omni.kit.app._impl] [py stderr]:     
+[91m[1m2024-05-08 15:59:24 [36,796ms] [Error] [omni.kit.app._impl] [py stderr]: parse_hydra_configs()
+[91m[1m2024-05-08 15:59:24 [36,796ms] [Error] [omni.kit.app._impl] [py stderr]: 
+    parse_hydra_configs()
+[91m[1m2024-05-08 15:59:24 [36,796ms] [Error] [omni.kit.app._impl] [py stderr]:   File "/home/vncusr/.local/share/ov/pkg/isaac_sim-2023.1.1/kit/python/lib/python3.10/site-packages/hydra/main.py", line 94, in decorated_main
+  File "/home/vncusr/.local/share/ov/pkg/isaac_sim-2023.1.1/kit/python/lib/python3.10/site-packages/hydra/main.py", line 94, in decorated_main
+[91m[1m2024-05-08 15:59:24 [36,796ms] [Error] [omni.kit.app._impl] [py stderr]:     
+[91m[1m2024-05-08 15:59:24 [36,796ms] [Error] [omni.kit.app._impl] [py stderr]: _run_hydra(
+[91m[1m2024-05-08 15:59:24 [36,796ms] [Error] [omni.kit.app._impl] [py stderr]: 
+    _run_hydra(
+[91m[1m2024-05-08 15:59:24 [36,796ms] [Error] [omni.kit.app._impl] [py stderr]:   File "/home/vncusr/.local/share/ov/pkg/isaac_sim-2023.1.1/kit/python/lib/python3.10/site-packages/hydra/_internal/utils.py", line 394, in _run_hydra
+  File "/home/vncusr/.local/share/ov/pkg/isaac_sim-2023.1.1/kit/python/lib/python3.10/site-packages/hydra/_internal/utils.py", line 394, in _run_hydra
+[91m[1m2024-05-08 15:59:24 [36,797ms] [Error] [omni.kit.app._impl] [py stderr]:     
+[91m[1m2024-05-08 15:59:24 [36,797ms] [Error] [omni.kit.app._impl] [py stderr]: _run_app(
+[91m[1m2024-05-08 15:59:24 [36,797ms] [Error] [omni.kit.app._impl] [py stderr]: 
+    _run_app(
+[91m[1m2024-05-08 15:59:24 [36,797ms] [Error] [omni.kit.app._impl] [py stderr]:   File "/home/vncusr/.local/share/ov/pkg/isaac_sim-2023.1.1/kit/python/lib/python3.10/site-packages/hydra/_internal/utils.py", line 457, in _run_app
+  File "/home/vncusr/.local/share/ov/pkg/isaac_sim-2023.1.1/kit/python/lib/python3.10/site-packages/hydra/_internal/utils.py", line 457, in _run_app
+[91m[1m2024-05-08 15:59:24 [36,797ms] [Error] [omni.kit.app._impl] [py stderr]:     
+[91m[1m2024-05-08 15:59:24 [36,797ms] [Error] [omni.kit.app._impl] [py stderr]: run_and_report(
+[91m[1m2024-05-08 15:59:24 [36,797ms] [Error] [omni.kit.app._impl] [py stderr]: 
+    run_and_report(
+[91m[1m2024-05-08 15:59:24 [36,797ms] [Error] [omni.kit.app._impl] [py stderr]:   File "/home/vncusr/.local/share/ov/pkg/isaac_sim-2023.1.1/kit/python/lib/python3.10/site-packages/hydra/_internal/utils.py", line 223, in run_and_report
+  File "/home/vncusr/.local/share/ov/pkg/isaac_sim-2023.1.1/kit/python/lib/python3.10/site-packages/hydra/_internal/utils.py", line 223, in run_and_report
+[91m[1m2024-05-08 15:59:24 [36,797ms] [Error] [omni.kit.app._impl] [py stderr]:     
+[91m[1m2024-05-08 15:59:24 [36,797ms] [Error] [omni.kit.app._impl] [py stderr]: raise ex
+[91m[1m2024-05-08 15:59:24 [36,797ms] [Error] [omni.kit.app._impl] [py stderr]: 
+    raise ex
+[91m[1m2024-05-08 15:59:24 [36,797ms] [Error] [omni.kit.app._impl] [py stderr]:   File "/home/vncusr/.local/share/ov/pkg/isaac_sim-2023.1.1/kit/python/lib/python3.10/site-packages/hydra/_internal/utils.py", line 220, in run_and_report
+  File "/home/vncusr/.local/share/ov/pkg/isaac_sim-2023.1.1/kit/python/lib/python3.10/site-packages/hydra/_internal/utils.py", line 220, in run_and_report
+[91m[1m2024-05-08 15:59:24 [36,798ms] [Error] [omni.kit.app._impl] [py stderr]:     
+[91m[1m2024-05-08 15:59:24 [36,798ms] [Error] [omni.kit.app._impl] [py stderr]: return func()
+[91m[1m2024-05-08 15:59:24 [36,798ms] [Error] [omni.kit.app._impl] [py stderr]: 
+    return func()
+[91m[1m2024-05-08 15:59:24 [36,798ms] [Error] [omni.kit.app._impl] [py stderr]:   File "/home/vncusr/.local/share/ov/pkg/isaac_sim-2023.1.1/kit/python/lib/python3.10/site-packages/hydra/_internal/utils.py", line 458, in <lambda>
+  File "/home/vncusr/.local/share/ov/pkg/isaac_sim-2023.1.1/kit/python/lib/python3.10/site-packages/hydra/_internal/utils.py", line 458, in <lambda>
+[91m[1m2024-05-08 15:59:24 [36,798ms] [Error] [omni.kit.app._impl] [py stderr]:     
+[91m[1m2024-05-08 15:59:24 [36,798ms] [Error] [omni.kit.app._impl] [py stderr]: lambda: hydra.run(
+[91m[1m2024-05-08 15:59:24 [36,798ms] [Error] [omni.kit.app._impl] [py stderr]: 
+    lambda: hydra.run(
+[91m[1m2024-05-08 15:59:24 [36,798ms] [Error] [omni.kit.app._impl] [py stderr]:   File "/home/vncusr/.local/share/ov/pkg/isaac_sim-2023.1.1/kit/python/lib/python3.10/site-packages/hydra/_internal/hydra.py", line 132, in run
+  File "/home/vncusr/.local/share/ov/pkg/isaac_sim-2023.1.1/kit/python/lib/python3.10/site-packages/hydra/_internal/hydra.py", line 132, in run
+[91m[1m2024-05-08 15:59:24 [36,798ms] [Error] [omni.kit.app._impl] [py stderr]:     
+[91m[1m2024-05-08 15:59:24 [36,798ms] [Error] [omni.kit.app._impl] [py stderr]: _ = ret.return_value
+[91m[1m2024-05-08 15:59:24 [36,798ms] [Error] [omni.kit.app._impl] [py stderr]: 
+    _ = ret.return_value
+[91m[1m2024-05-08 15:59:24 [36,798ms] [Error] [omni.kit.app._impl] [py stderr]:   File "/home/vncusr/.local/share/ov/pkg/isaac_sim-2023.1.1/kit/python/lib/python3.10/site-packages/hydra/core/utils.py", line 260, in return_value
+  File "/home/vncusr/.local/share/ov/pkg/isaac_sim-2023.1.1/kit/python/lib/python3.10/site-packages/hydra/core/utils.py", line 260, in return_value
+[91m[1m2024-05-08 15:59:24 [36,799ms] [Error] [omni.kit.app._impl] [py stderr]:     
+[91m[1m2024-05-08 15:59:24 [36,799ms] [Error] [omni.kit.app._impl] [py stderr]: raise self._return_value
+[91m[1m2024-05-08 15:59:24 [36,799ms] [Error] [omni.kit.app._impl] [py stderr]: 
+    raise self._return_value
+[91m[1m2024-05-08 15:59:24 [36,799ms] [Error] [omni.kit.app._impl] [py stderr]:   File "/home/vncusr/.local/share/ov/pkg/isaac_sim-2023.1.1/kit/python/lib/python3.10/site-packages/hydra/core/utils.py", line 186, in run_job
+  File "/home/vncusr/.local/share/ov/pkg/isaac_sim-2023.1.1/kit/python/lib/python3.10/site-packages/hydra/core/utils.py", line 186, in run_job
+[91m[1m2024-05-08 15:59:24 [36,799ms] [Error] [omni.kit.app._impl] [py stderr]:     
+[91m[1m2024-05-08 15:59:24 [36,799ms] [Error] [omni.kit.app._impl] [py stderr]: ret.return_value = task_function(task_cfg)
+[91m[1m2024-05-08 15:59:24 [36,799ms] [Error] [omni.kit.app._impl] [py stderr]: 
+    ret.return_value = task_function(task_cfg)
+[91m[1m2024-05-08 15:59:24 [36,799ms] [Error] [omni.kit.app._impl] [py stderr]:   File "/home/vncusr/OmniIsaacGymEnvs/omniisaacgymenvs/scripts/rlgames_play.py", line 96, in parse_hydra_configs
+  File "/home/vncusr/OmniIsaacGymEnvs/omniisaacgymenvs/scripts/rlgames_play.py", line 96, in parse_hydra_configs
+[91m[1m2024-05-08 15:59:24 [36,799ms] [Error] [omni.kit.app._impl] [py stderr]:     
+[91m[1m2024-05-08 15:59:24 [36,799ms] [Error] [omni.kit.app._impl] [py stderr]: rlg_trainer.run(module_path=module_path, experiment_dir=experiment_dir)
+[91m[1m2024-05-08 15:59:24 [36,799ms] [Error] [omni.kit.app._impl] [py stderr]: 
+    rlg_trainer.run(module_path=module_path, experiment_dir=experiment_dir)
+[91m[1m2024-05-08 15:59:24 [36,799ms] [Error] [omni.kit.app._impl] [py stderr]:   File "/home/vncusr/OmniIsaacGymEnvs/omniisaacgymenvs/scripts/rlgames_train.py", line 106, in run
+  File "/home/vncusr/OmniIsaacGymEnvs/omniisaacgymenvs/scripts/rlgames_train.py", line 106, in run
+[91m[1m2024-05-08 15:59:24 [36,800ms] [Error] [omni.kit.app._impl] [py stderr]:     
+[91m[1m2024-05-08 15:59:24 [36,800ms] [Error] [omni.kit.app._impl] [py stderr]: runner.run(
+[91m[1m2024-05-08 15:59:24 [36,800ms] [Error] [omni.kit.app._impl] [py stderr]: 
+    runner.run(
+[91m[1m2024-05-08 15:59:24 [36,800ms] [Error] [omni.kit.app._impl] [py stderr]:   File "/home/vncusr/.local/share/ov/pkg/isaac_sim-2023.1.1/kit/python/lib/python3.10/site-packages/rl_games/torch_runner.py", line 135, in run
+  File "/home/vncusr/.local/share/ov/pkg/isaac_sim-2023.1.1/kit/python/lib/python3.10/site-packages/rl_games/torch_runner.py", line 135, in run
+[91m[1m2024-05-08 15:59:24 [36,800ms] [Error] [omni.kit.app._impl] [py stderr]:     
+[91m[1m2024-05-08 15:59:24 [36,800ms] [Error] [omni.kit.app._impl] [py stderr]: self.run_play(args)
+[91m[1m2024-05-08 15:59:24 [36,800ms] [Error] [omni.kit.app._impl] [py stderr]: 
+    self.run_play(args)
+[91m[1m2024-05-08 15:59:24 [36,800ms] [Error] [omni.kit.app._impl] [py stderr]:   File "/home/vncusr/.local/share/ov/pkg/isaac_sim-2023.1.1/kit/python/lib/python3.10/site-packages/rl_games/torch_runner.py", line 120, in run_play
+  File "/home/vncusr/.local/share/ov/pkg/isaac_sim-2023.1.1/kit/python/lib/python3.10/site-packages/rl_games/torch_runner.py", line 120, in run_play
+[91m[1m2024-05-08 15:59:24 [36,800ms] [Error] [omni.kit.app._impl] [py stderr]:     
+[91m[1m2024-05-08 15:59:24 [36,800ms] [Error] [omni.kit.app._impl] [py stderr]: player = self.create_player()
+[91m[1m2024-05-08 15:59:24 [36,800ms] [Error] [omni.kit.app._impl] [py stderr]: 
+    player = self.create_player()
+[91m[1m2024-05-08 15:59:24 [36,800ms] [Error] [omni.kit.app._impl] [py stderr]:   File "/home/vncusr/.local/share/ov/pkg/isaac_sim-2023.1.1/kit/python/lib/python3.10/site-packages/rl_games/torch_runner.py", line 126, in create_player
+  File "/home/vncusr/.local/share/ov/pkg/isaac_sim-2023.1.1/kit/python/lib/python3.10/site-packages/rl_games/torch_runner.py", line 126, in create_player
+[91m[1m2024-05-08 15:59:24 [36,801ms] [Error] [omni.kit.app._impl] [py stderr]:     
+[91m[1m2024-05-08 15:59:24 [36,801ms] [Error] [omni.kit.app._impl] [py stderr]: return self.player_factory.create(self.algo_name, params=self.params)
+[91m[1m2024-05-08 15:59:24 [36,801ms] [Error] [omni.kit.app._impl] [py stderr]: 
+    return self.player_factory.create(self.algo_name, params=self.params)
+[91m[1m2024-05-08 15:59:24 [36,801ms] [Error] [omni.kit.app._impl] [py stderr]:   File "/home/vncusr/.local/share/ov/pkg/isaac_sim-2023.1.1/kit/python/lib/python3.10/site-packages/rl_games/common/object_factory.py", line 15, in create
+  File "/home/vncusr/.local/share/ov/pkg/isaac_sim-2023.1.1/kit/python/lib/python3.10/site-packages/rl_games/common/object_factory.py", line 15, in create
+[91m[1m2024-05-08 15:59:24 [36,801ms] [Error] [omni.kit.app._impl] [py stderr]:     
+[91m[1m2024-05-08 15:59:24 [36,801ms] [Error] [omni.kit.app._impl] [py stderr]: return builder(**kwargs)
+[91m[1m2024-05-08 15:59:24 [36,801ms] [Error] [omni.kit.app._impl] [py stderr]: 
+    return builder(**kwargs)
+[91m[1m2024-05-08 15:59:24 [36,801ms] [Error] [omni.kit.app._impl] [py stderr]:   File "/home/vncusr/.local/share/ov/pkg/isaac_sim-2023.1.1/kit/python/lib/python3.10/site-packages/rl_games/torch_runner.py", line 45, in <lambda>
+  File "/home/vncusr/.local/share/ov/pkg/isaac_sim-2023.1.1/kit/python/lib/python3.10/site-packages/rl_games/torch_runner.py", line 45, in <lambda>
+[91m[1m2024-05-08 15:59:24 [36,801ms] [Error] [omni.kit.app._impl] [py stderr]:     
+[91m[1m2024-05-08 15:59:24 [36,801ms] [Error] [omni.kit.app._impl] [py stderr]: self.player_factory.register_builder('sac', lambda **kwargs : players.SACPlayer(**kwargs))
+[91m[1m2024-05-08 15:59:24 [36,801ms] [Error] [omni.kit.app._impl] [py stderr]: 
+    self.player_factory.register_builder('sac', lambda **kwargs : players.SACPlayer(**kwargs))
+[91m[1m2024-05-08 15:59:24 [36,801ms] [Error] [omni.kit.app._impl] [py stderr]:   File "/home/vncusr/.local/share/ov/pkg/isaac_sim-2023.1.1/kit/python/lib/python3.10/site-packages/rl_games/algos_torch/players.py", line 223, in __init__
+  File "/home/vncusr/.local/share/ov/pkg/isaac_sim-2023.1.1/kit/python/lib/python3.10/site-packages/rl_games/algos_torch/players.py", line 223, in __init__
+[91m[1m2024-05-08 15:59:24 [36,802ms] [Error] [omni.kit.app._impl] [py stderr]:     
+[91m[1m2024-05-08 15:59:24 [36,802ms] [Error] [omni.kit.app._impl] [py stderr]: self.model.sac_network.actor.load_state_dict(checkpoint['actor'])
+[91m[1m2024-05-08 15:59:24 [36,802ms] [Error] [omni.kit.app._impl] [py stderr]: 
+    self.model.sac_network.actor.load_state_dict(checkpoint['actor'])
+[91m[1m2024-05-08 15:59:24 [36,802ms] [Error] [omni.kit.app._impl] [py stderr]: NameError
+[91m[1m2024-05-08 15:59:24 [36,802ms] [Error] [omni.kit.app._impl] [py stderr]: : 
+[91m[1m2024-05-08 15:59:24 [36,802ms] [Error] [omni.kit.app._impl] [py stderr]: name 'checkpoint' is not defined
+[91m[1m2024-05-08 15:59:24 [36,802ms] [Error] [omni.kit.app._impl] [py stderr]: . Did you mean: '
+[91m[1m2024-05-08 15:59:24 [36,802ms] [Error] [omni.kit.app._impl] [py stderr]: breakpoint
+[91m[1m2024-05-08 15:59:24 [36,802ms] [Error] [omni.kit.app._impl] [py stderr]: '?
+[91m[1m2024-05-08 15:59:24 [36,802ms] [Error] [omni.kit.app._impl] [py stderr]: 
+NameError: name 'checkpoint' is not defined. Did you mean: 'breakpoint'?

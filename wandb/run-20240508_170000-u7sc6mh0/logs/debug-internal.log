@@ -1,0 +1,94 @@
+2024-05-08 17:00:01,636 INFO    MainThread:1624244 [internal.py:wandb_internal():90] W&B internal server running at pid: 1624244, started at: 2024-05-08 17:00:01.636077
+2024-05-08 17:00:01,641 INFO    WriterThread:1624244 [datastore.py:open_for_write():75] open: /home/vncusr/OmniIsaacGymEnvs/wandb/run-20240508_170000-u7sc6mh0/run-u7sc6mh0.wandb
+2024-05-08 17:00:01,842 DEBUG   SenderThread:1624244 [sender.py:send():236] send: header
+2024-05-08 17:00:01,842 DEBUG   SenderThread:1624244 [sender.py:send():236] send: run
+2024-05-08 17:00:01,861 INFO    SenderThread:1624244 [sender.py:_maybe_setup_resume():493] checking resume status for voll-olga-ds/UR10-bachelor-thesis/u7sc6mh0
+2024-05-08 17:00:02,442 INFO    SenderThread:1624244 [dir_watcher.py:__init__():216] watching files in: /home/vncusr/OmniIsaacGymEnvs/wandb/run-20240508_170000-u7sc6mh0/files
+2024-05-08 17:00:02,443 INFO    SenderThread:1624244 [sender.py:_start_run_threads():815] run started: u7sc6mh0 with start time 1715187600
+2024-05-08 17:00:02,451 DEBUG   SenderThread:1624244 [sender.py:send():236] send: summary
+2024-05-08 17:00:02,452 INFO    SenderThread:1624244 [sender.py:_save_file():952] saving file wandb-summary.json with policy end
+2024-05-08 17:00:02,455 DEBUG   HandlerThread:1624244 [handler.py:handle_request():140] handle_request: check_version
+2024-05-08 17:00:02,456 DEBUG   SenderThread:1624244 [sender.py:send_request():250] send_request: check_version
+2024-05-08 17:00:02,593 DEBUG   HandlerThread:1624244 [handler.py:handle_request():140] handle_request: run_start
+2024-05-08 17:00:02,614 DEBUG   HandlerThread:1624244 [meta.py:__init__():35] meta init
+2024-05-08 17:00:02,614 DEBUG   HandlerThread:1624244 [meta.py:__init__():49] meta init done
+2024-05-08 17:00:02,614 DEBUG   HandlerThread:1624244 [meta.py:probe():209] probe
+2024-05-08 17:00:02,630 DEBUG   HandlerThread:1624244 [meta.py:_setup_git():199] setup git
+2024-05-08 17:00:02,653 DEBUG   HandlerThread:1624244 [meta.py:_setup_git():206] setup git done
+2024-05-08 17:00:02,653 DEBUG   HandlerThread:1624244 [meta.py:_save_pip():53] save pip
+2024-05-08 17:00:02,654 DEBUG   HandlerThread:1624244 [meta.py:_save_pip():67] save pip done
+2024-05-08 17:00:02,654 DEBUG   HandlerThread:1624244 [meta.py:probe():247] probe done
+2024-05-08 17:00:02,741 DEBUG   SenderThread:1624244 [sender.py:send():236] send: files
+2024-05-08 17:00:02,742 INFO    SenderThread:1624244 [sender.py:_save_file():952] saving file wandb-metadata.json with policy now
+2024-05-08 17:00:02,752 DEBUG   HandlerThread:1624244 [handler.py:handle_request():140] handle_request: stop_status
+2024-05-08 17:00:02,752 DEBUG   SenderThread:1624244 [sender.py:send_request():250] send_request: stop_status
+2024-05-08 17:00:03,011 DEBUG   SenderThread:1624244 [sender.py:send():236] send: telemetry
+2024-05-08 17:00:03,372 INFO    Thread-11 :1624244 [upload_job.py:push():138] Uploaded file /tmp/tmpg3myh8pcwandb/qy9985sw-wandb-metadata.json
+2024-05-08 17:00:03,447 INFO    Thread-7  :1624244 [dir_watcher.py:_on_file_created():269] file/dir created: /home/vncusr/OmniIsaacGymEnvs/wandb/run-20240508_170000-u7sc6mh0/files/output.log
+2024-05-08 17:00:03,447 INFO    Thread-7  :1624244 [dir_watcher.py:_on_file_created():269] file/dir created: /home/vncusr/OmniIsaacGymEnvs/wandb/run-20240508_170000-u7sc6mh0/files/wandb-summary.json
+2024-05-08 17:00:03,447 INFO    Thread-7  :1624244 [dir_watcher.py:_on_file_created():269] file/dir created: /home/vncusr/OmniIsaacGymEnvs/wandb/run-20240508_170000-u7sc6mh0/files/requirements.txt
+2024-05-08 17:00:03,448 INFO    Thread-7  :1624244 [dir_watcher.py:_on_file_created():269] file/dir created: /home/vncusr/OmniIsaacGymEnvs/wandb/run-20240508_170000-u7sc6mh0/files/wandb-metadata.json
+2024-05-08 17:00:05,445 INFO    Thread-7  :1624244 [dir_watcher.py:_on_file_modified():286] file/dir modified: /home/vncusr/OmniIsaacGymEnvs/wandb/run-20240508_170000-u7sc6mh0/files/output.log
+2024-05-08 17:00:18,022 DEBUG   HandlerThread:1624244 [handler.py:handle_request():140] handle_request: stop_status
+2024-05-08 17:00:18,023 DEBUG   SenderThread:1624244 [sender.py:send_request():250] send_request: stop_status
+2024-05-08 17:00:25,457 INFO    Thread-7  :1624244 [dir_watcher.py:_on_file_modified():286] file/dir modified: /home/vncusr/OmniIsaacGymEnvs/wandb/run-20240508_170000-u7sc6mh0/files/output.log
+2024-05-08 17:00:31,190 DEBUG   SenderThread:1624244 [sender.py:send():236] send: stats
+2024-05-08 17:00:32,462 INFO    Thread-7  :1624244 [dir_watcher.py:_on_file_modified():286] file/dir modified: /home/vncusr/OmniIsaacGymEnvs/wandb/run-20240508_170000-u7sc6mh0/files/config.yaml
+2024-05-08 17:00:33,335 DEBUG   HandlerThread:1624244 [handler.py:handle_request():140] handle_request: stop_status
+2024-05-08 17:00:33,335 DEBUG   SenderThread:1624244 [sender.py:send_request():250] send_request: stop_status
+2024-05-08 17:00:39,466 INFO    Thread-7  :1624244 [dir_watcher.py:_on_file_modified():286] file/dir modified: /home/vncusr/OmniIsaacGymEnvs/wandb/run-20240508_170000-u7sc6mh0/files/output.log
+2024-05-08 17:00:48,670 DEBUG   HandlerThread:1624244 [handler.py:handle_request():140] handle_request: stop_status
+2024-05-08 17:00:48,670 DEBUG   SenderThread:1624244 [sender.py:send_request():250] send_request: stop_status
+2024-05-08 17:00:55,476 INFO    Thread-7  :1624244 [dir_watcher.py:_on_file_modified():286] file/dir modified: /home/vncusr/OmniIsaacGymEnvs/wandb/run-20240508_170000-u7sc6mh0/files/output.log
+2024-05-08 17:01:01,778 DEBUG   SenderThread:1624244 [sender.py:send():236] send: stats
+2024-05-08 17:01:03,873 DEBUG   HandlerThread:1624244 [handler.py:handle_request():140] handle_request: stop_status
+2024-05-08 17:01:03,874 DEBUG   SenderThread:1624244 [sender.py:send_request():250] send_request: stop_status
+2024-05-08 17:01:12,487 INFO    Thread-7  :1624244 [dir_watcher.py:_on_file_modified():286] file/dir modified: /home/vncusr/OmniIsaacGymEnvs/wandb/run-20240508_170000-u7sc6mh0/files/output.log
+2024-05-08 17:01:19,106 DEBUG   HandlerThread:1624244 [handler.py:handle_request():140] handle_request: stop_status
+2024-05-08 17:01:19,107 DEBUG   SenderThread:1624244 [sender.py:send_request():250] send_request: stop_status
+2024-05-08 17:01:26,498 INFO    Thread-7  :1624244 [dir_watcher.py:_on_file_modified():286] file/dir modified: /home/vncusr/OmniIsaacGymEnvs/wandb/run-20240508_170000-u7sc6mh0/files/output.log
+2024-05-08 17:01:32,380 DEBUG   SenderThread:1624244 [sender.py:send():236] send: stats
+2024-05-08 17:01:34,450 DEBUG   HandlerThread:1624244 [handler.py:handle_request():140] handle_request: stop_status
+2024-05-08 17:01:34,450 DEBUG   SenderThread:1624244 [sender.py:send_request():250] send_request: stop_status
+2024-05-08 17:01:42,517 INFO    Thread-7  :1624244 [dir_watcher.py:_on_file_modified():286] file/dir modified: /home/vncusr/OmniIsaacGymEnvs/wandb/run-20240508_170000-u7sc6mh0/files/output.log
+2024-05-08 17:01:49,802 DEBUG   HandlerThread:1624244 [handler.py:handle_request():140] handle_request: stop_status
+2024-05-08 17:01:49,803 DEBUG   SenderThread:1624244 [sender.py:send_request():250] send_request: stop_status
+2024-05-08 17:01:56,531 INFO    Thread-7  :1624244 [dir_watcher.py:_on_file_modified():286] file/dir modified: /home/vncusr/OmniIsaacGymEnvs/wandb/run-20240508_170000-u7sc6mh0/files/output.log
+2024-05-08 17:02:02,982 DEBUG   SenderThread:1624244 [sender.py:send():236] send: stats
+2024-05-08 17:02:05,082 DEBUG   HandlerThread:1624244 [handler.py:handle_request():140] handle_request: stop_status
+2024-05-08 17:02:05,082 DEBUG   SenderThread:1624244 [sender.py:send_request():250] send_request: stop_status
+2024-05-08 17:02:13,545 INFO    Thread-7  :1624244 [dir_watcher.py:_on_file_modified():286] file/dir modified: /home/vncusr/OmniIsaacGymEnvs/wandb/run-20240508_170000-u7sc6mh0/files/output.log
+2024-05-08 17:02:20,375 DEBUG   HandlerThread:1624244 [handler.py:handle_request():140] handle_request: stop_status
+2024-05-08 17:02:20,378 DEBUG   SenderThread:1624244 [sender.py:send_request():250] send_request: stop_status
+2024-05-08 17:02:27,556 INFO    Thread-7  :1624244 [dir_watcher.py:_on_file_modified():286] file/dir modified: /home/vncusr/OmniIsaacGymEnvs/wandb/run-20240508_170000-u7sc6mh0/files/output.log
+2024-05-08 17:02:29,557 INFO    Thread-7  :1624244 [dir_watcher.py:_on_file_modified():286] file/dir modified: /home/vncusr/OmniIsaacGymEnvs/wandb/run-20240508_170000-u7sc6mh0/files/output.log
+2024-05-08 17:02:33,594 DEBUG   SenderThread:1624244 [sender.py:send():236] send: stats
+2024-05-08 17:02:35,617 DEBUG   HandlerThread:1624244 [handler.py:handle_request():140] handle_request: stop_status
+2024-05-08 17:02:35,618 DEBUG   SenderThread:1624244 [sender.py:send_request():250] send_request: stop_status
+2024-05-08 17:02:43,574 INFO    Thread-7  :1624244 [dir_watcher.py:_on_file_modified():286] file/dir modified: /home/vncusr/OmniIsaacGymEnvs/wandb/run-20240508_170000-u7sc6mh0/files/output.log
+2024-05-08 17:02:50,908 DEBUG   HandlerThread:1624244 [handler.py:handle_request():140] handle_request: stop_status
+2024-05-08 17:02:50,909 DEBUG   SenderThread:1624244 [sender.py:send_request():250] send_request: stop_status
+2024-05-08 17:02:59,590 INFO    Thread-7  :1624244 [dir_watcher.py:_on_file_modified():286] file/dir modified: /home/vncusr/OmniIsaacGymEnvs/wandb/run-20240508_170000-u7sc6mh0/files/output.log
+2024-05-08 17:03:04,228 DEBUG   SenderThread:1624244 [sender.py:send():236] send: stats
+2024-05-08 17:03:05,602 WARNING MainThread:1624244 [internal.py:wandb_internal():153] Internal process interrupt: 1
+2024-05-08 17:03:06,165 DEBUG   HandlerThread:1624244 [handler.py:handle_request():140] handle_request: stop_status
+2024-05-08 17:03:06,166 DEBUG   SenderThread:1624244 [sender.py:send_request():250] send_request: stop_status
+2024-05-08 17:03:07,613 WARNING MainThread:1624244 [internal.py:is_dead():387] Internal process exiting, parent pid 1624013 disappeared
+2024-05-08 17:03:07,613 ERROR   MainThread:1624244 [internal.py:wandb_internal():149] Internal process shutdown.
+2024-05-08 17:03:08,199 INFO    HandlerThread:1624244 [handler.py:finish():806] shutting down handler
+2024-05-08 17:03:08,228 INFO    WriterThread:1624244 [datastore.py:close():279] close: /home/vncusr/OmniIsaacGymEnvs/wandb/run-20240508_170000-u7sc6mh0/run-u7sc6mh0.wandb
+2024-05-08 17:03:08,448 INFO    SenderThread:1624244 [sender.py:finish():1114] shutting down sender
+2024-05-08 17:03:08,450 INFO    SenderThread:1624244 [dir_watcher.py:finish():353] shutting down directory watcher
+2024-05-08 17:03:08,600 INFO    SenderThread:1624244 [dir_watcher.py:finish():383] scan: /home/vncusr/OmniIsaacGymEnvs/wandb/run-20240508_170000-u7sc6mh0/files
+2024-05-08 17:03:08,601 INFO    SenderThread:1624244 [dir_watcher.py:finish():397] scan save: /home/vncusr/OmniIsaacGymEnvs/wandb/run-20240508_170000-u7sc6mh0/files/wandb-metadata.json wandb-metadata.json
+2024-05-08 17:03:08,601 INFO    SenderThread:1624244 [dir_watcher.py:finish():397] scan save: /home/vncusr/OmniIsaacGymEnvs/wandb/run-20240508_170000-u7sc6mh0/files/requirements.txt requirements.txt
+2024-05-08 17:03:08,601 INFO    SenderThread:1624244 [dir_watcher.py:finish():397] scan save: /home/vncusr/OmniIsaacGymEnvs/wandb/run-20240508_170000-u7sc6mh0/files/config.yaml config.yaml
+2024-05-08 17:03:08,602 INFO    SenderThread:1624244 [dir_watcher.py:finish():397] scan save: /home/vncusr/OmniIsaacGymEnvs/wandb/run-20240508_170000-u7sc6mh0/files/output.log output.log
+2024-05-08 17:03:08,602 INFO    SenderThread:1624244 [dir_watcher.py:finish():397] scan save: /home/vncusr/OmniIsaacGymEnvs/wandb/run-20240508_170000-u7sc6mh0/files/wandb-summary.json wandb-summary.json
+2024-05-08 17:03:08,603 INFO    SenderThread:1624244 [file_pusher.py:finish():171] shutting down file pusher
+2024-05-08 17:03:08,603 INFO    SenderThread:1624244 [file_pusher.py:join():176] waiting for file pusher
+2024-05-08 17:03:09,375 INFO    Thread-12 :1624244 [upload_job.py:push():138] Uploaded file /home/vncusr/OmniIsaacGymEnvs/wandb/run-20240508_170000-u7sc6mh0/files/requirements.txt
+2024-05-08 17:03:09,383 INFO    Thread-15 :1624244 [upload_job.py:push():138] Uploaded file /home/vncusr/OmniIsaacGymEnvs/wandb/run-20240508_170000-u7sc6mh0/files/wandb-summary.json
+2024-05-08 17:03:09,430 INFO    Thread-13 :1624244 [upload_job.py:push():138] Uploaded file /home/vncusr/OmniIsaacGymEnvs/wandb/run-20240508_170000-u7sc6mh0/files/config.yaml
+2024-05-08 17:03:10,004 INFO    Thread-14 :1624244 [upload_job.py:push():138] Uploaded file /home/vncusr/OmniIsaacGymEnvs/wandb/run-20240508_170000-u7sc6mh0/files/output.log
+2024-05-08 17:03:10,766 INFO    MainThread:1624244 [internal.py:handle_exit():80] Internal process exited

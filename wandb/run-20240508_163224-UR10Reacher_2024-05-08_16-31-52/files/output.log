@@ -1,0 +1,54 @@
+self.seed = 42
+Started to play
+[BasePlayer] Creating regular env:  rlgpu
+{'observation_space': Box(-inf, inf, (29,), float32), 'action_space': Box(-1.0, 1.0, (6,), float32), 'agents': 1, 'value_size': 1}
+Building Actor
+build mlp: 29
+Building Critic
+build mlp: 35
+build mlp: 35
+Building Critic Target
+build mlp: 35
+build mlp: 35
+=> loading checkpoint '/home/vncusr/OmniIsaacGymEnvs/omniisaacgymenvs/runs/UR10Reacher/nn/last_UR10Reacher_ep_251200_rew_1971.0665.pth'
+Layer Name: sac_network.actor.trunk.0.weight, Parameter Shape: torch.Size([256, 29])
+Layer Name: sac_network.actor.trunk.0.bias, Parameter Shape: torch.Size([256])
+Layer Name: sac_network.actor.trunk.2.weight, Parameter Shape: torch.Size([256, 256])
+Layer Name: sac_network.actor.trunk.2.bias, Parameter Shape: torch.Size([256])
+Layer Name: sac_network.actor.trunk.4.weight, Parameter Shape: torch.Size([256, 256])
+Layer Name: sac_network.actor.trunk.4.bias, Parameter Shape: torch.Size([256])
+Layer Name: sac_network.actor.trunk.6.weight, Parameter Shape: torch.Size([12, 256])
+Layer Name: sac_network.actor.trunk.6.bias, Parameter Shape: torch.Size([12])
+Layer Name: sac_network.critic.Q1.0.weight, Parameter Shape: torch.Size([256, 35])
+Layer Name: sac_network.critic.Q1.0.bias, Parameter Shape: torch.Size([256])
+Layer Name: sac_network.critic.Q1.2.weight, Parameter Shape: torch.Size([256, 256])
+Layer Name: sac_network.critic.Q1.2.bias, Parameter Shape: torch.Size([256])
+Layer Name: sac_network.critic.Q1.4.weight, Parameter Shape: torch.Size([256, 256])
+Layer Name: sac_network.critic.Q1.4.bias, Parameter Shape: torch.Size([256])
+Layer Name: sac_network.critic.Q1.6.weight, Parameter Shape: torch.Size([1, 256])
+Layer Name: sac_network.critic.Q1.6.bias, Parameter Shape: torch.Size([1])
+Layer Name: sac_network.critic.Q2.0.weight, Parameter Shape: torch.Size([256, 35])
+Layer Name: sac_network.critic.Q2.0.bias, Parameter Shape: torch.Size([256])
+Layer Name: sac_network.critic.Q2.2.weight, Parameter Shape: torch.Size([256, 256])
+Layer Name: sac_network.critic.Q2.2.bias, Parameter Shape: torch.Size([256])
+Layer Name: sac_network.critic.Q2.4.weight, Parameter Shape: torch.Size([256, 256])
+Layer Name: sac_network.critic.Q2.4.bias, Parameter Shape: torch.Size([256])
+Layer Name: sac_network.critic.Q2.6.weight, Parameter Shape: torch.Size([1, 256])
+Layer Name: sac_network.critic.Q2.6.bias, Parameter Shape: torch.Size([1])
+Layer Name: sac_network.critic_target.Q1.0.weight, Parameter Shape: torch.Size([256, 35])
+Layer Name: sac_network.critic_target.Q1.0.bias, Parameter Shape: torch.Size([256])
+Layer Name: sac_network.critic_target.Q1.2.weight, Parameter Shape: torch.Size([256, 256])
+Layer Name: sac_network.critic_target.Q1.2.bias, Parameter Shape: torch.Size([256])
+Layer Name: sac_network.critic_target.Q1.4.weight, Parameter Shape: torch.Size([256, 256])
+Layer Name: sac_network.critic_target.Q1.4.bias, Parameter Shape: torch.Size([256])
+Layer Name: sac_network.critic_target.Q1.6.weight, Parameter Shape: torch.Size([1, 256])
+Layer Name: sac_network.critic_target.Q1.6.bias, Parameter Shape: torch.Size([1])
+Layer Name: sac_network.critic_target.Q2.0.weight, Parameter Shape: torch.Size([256, 35])
+Layer Name: sac_network.critic_target.Q2.0.bias, Parameter Shape: torch.Size([256])
+Layer Name: sac_network.critic_target.Q2.2.weight, Parameter Shape: torch.Size([256, 256])
+Layer Name: sac_network.critic_target.Q2.2.bias, Parameter Shape: torch.Size([256])
+Layer Name: sac_network.critic_target.Q2.4.weight, Parameter Shape: torch.Size([256, 256])
+Layer Name: sac_network.critic_target.Q2.4.bias, Parameter Shape: torch.Size([256])
+Layer Name: sac_network.critic_target.Q2.6.weight, Parameter Shape: torch.Size([1, 256])
+Layer Name: sac_network.critic_target.Q2.6.bias, Parameter Shape: torch.Size([1])
+Checkpoint successfully loaded.

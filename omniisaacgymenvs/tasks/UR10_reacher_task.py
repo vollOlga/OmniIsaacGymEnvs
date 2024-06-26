@@ -30,8 +30,8 @@
 
 from omniisaacgymenvs.utils.config_utils.sim_config import SimConfig
 from omniisaacgymenvs.tasks.shared.reacher import ReacherTask
-from omniisaacgymenvs.robots.articulations.views.ur10_view import UR10View
-from omniisaacgymenvs.robots.articulations.UR10 import UR10
+from omniisaacgymenvs.robots.articulations.UR10.ur10_view import UR10View
+from omniisaacgymenvs.robots.articulations.UR10.ur10 import UR10
 
 from omni.isaac.core.utils.prims import get_prim_at_path
 from omni.isaac.core.utils.torch import *
@@ -64,7 +64,7 @@ class UR10ReacherTask(ReacherTask):
         self._sim_config = sim_config
         self._cfg = sim_config.config
         self._task_cfg = sim_config.task_config
-        self.end_effectors_init_rot = torch.tensor([1, 0, 0, 0], device=self._device) # w, x, y, z
+        #self.end_effectors_init_rot = torch.tensor([1, 0, 0, 0], device=self._device) # w, x, y, z
 
         self.obs_type = self._task_cfg["env"]["observationType"]
         if not (self.obs_type in ["full"]):
@@ -268,3 +268,5 @@ class UR10ReacherTask(ReacherTask):
         '''
         self.real_world_ur10.send_joint_pos(joint_pos)
         #print(f'joint positions: {joint_pos}')
+
+    
